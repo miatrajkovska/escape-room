@@ -366,10 +366,19 @@ def seed(db) -> None:
     print(f"Seed done: {len(rooms)} rooms, {len(bookings)} bookings, {2 + len(players)} users")
 
 
+def ensure_admin(db) -> None:
+    # Админ профилот на Миа – се додава и во постоечка база ако го нема
+    email = "mia@test.com"
+    if not db.scalar(select(User).where(User.email == email)):
+        db.add(User(name="Миа", email=email, password_hash=hash_password("mia"), is_admin=True))
+        db.commit()
+
+
 def seed_if_empty() -> None:
     with SessionLocal() as db:
         if db.scalar(select(func.count(Room.id))) == 0:
             seed(db)
+        ensure_admin(db)
 
 
 if __name__ == "__main__":

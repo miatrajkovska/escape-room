@@ -30,6 +30,7 @@ npm run dev
 |---|---|---|
 | demo@enigma.mk | demo123 | корисник (има резервации) |
 | admin@enigma.mk | admin123 | администратор |
+| mia@test.com | mia | администратор |
 
 Ресет на демо податоците: `cd backend && .venv/Scripts/python -m app.seed --reset`
 

@@ -96,6 +96,9 @@ export function LoginView() {
         <button type="button" onClick={() => fillDemo("admin@enigma.mk", "admin123")} className="block w-full rounded-md px-2 py-1 text-left hover:bg-muted">
           admin@enigma.mk / admin123 <span className="text-muted-foreground">(admin)</span>
         </button>
+        <button type="button" onClick={() => fillDemo("mia@test.com", "mia")} className="block w-full rounded-md px-2 py-1 text-left hover:bg-muted">
+          mia@test.com / mia <span className="text-muted-foreground">(admin)</span>
+        </button>
       </div>
     </AuthCard>
   );
