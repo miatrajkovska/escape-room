@@ -47,7 +47,149 @@
 
   <!-- ========== СОДРЖИНА ========== -->
   <main>
-    <!-- Тука ќе дојде содржината на почетната страница -->
+
+    <!-- 1. HERO: големиот почетен дел -->
+    <section class="hero">
+      <div class="container">
+        <h1>Enigma Escape</h1>
+        <p class="hero-slogan">„Имате 60 минути. Излезете ако можете.“</p>
+        <p class="hero-text">Четири тематски соби, загатки што ќе ве натераат да размислувате
+          и тајмер што не чека никого. Дали вашиот тим ќе успее да излезе?</p>
+        <div class="hero-buttons">
+          <a href="rezervacija.html" class="btn">Резервирај</a>
+          <a href="sobi.html" class="btn btn-outline">Види ги собите</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. КАКО ФУНКЦИОНИРА -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Како функционира</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-number">1</span>
+            <h3>Изберете соба</h3>
+            <p>Одберете тема и тежина по ваш вкус, од лесни до вистински тешки предизвици.</p>
+          </div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <h3>Резервирајте термин</h3>
+            <p>Изберете датум и час онлајн. Резервацијата трае само неколку минути.</p>
+          </div>
+          <div class="step">
+            <span class="step-number">3</span>
+            <h3>Излезете за 60 минути</h3>
+            <p>Барајте траги, решавајте загатки и соработувајте како тим пред да истече времето.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. НАШИТЕ СОБИ -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Нашите соби</h2>
+        <div class="rooms">
+
+          <article class="room-card">
+            <!-- Засега наместо слика: градиент со икона -->
+            <div class="room-image room-lab">🧪</div>
+            <div class="room-body">
+              <h3>Лабораторијата</h3>
+              <p>Научникот исчезнал, а вирусот е на слобода. Најдете го противотровот.</p>
+              <ul class="room-info">
+                <li class="stars" title="Тешко">★★★</li>
+                <li>👥 2–5 играчи</li>
+                <li>⏱ 60 мин</li>
+              </ul>
+              <a href="soba-laboratorija.html" class="room-link">Дознај повеќе →</a>
+            </div>
+          </article>
+
+          <article class="room-card">
+            <div class="room-image room-cell">⛓️</div>
+            <div class="room-body">
+              <h3>Ќелија 13</h3>
+              <p>Затворени сте неправедно, а стражарите наскоро се враќаат.</p>
+              <ul class="room-info">
+                <!-- празните ѕвезди се во span за да бидат посиви -->
+                <li class="stars" title="Средно">★★<span class="star-empty">★</span></li>
+                <li>👥 2–6 играчи</li>
+                <li>⏱ 60 мин</li>
+              </ul>
+              <a href="soba-kelija-13.html" class="room-link">Дознај повеќе →</a>
+            </div>
+          </article>
+
+          <article class="room-card">
+            <div class="room-image room-tomb">🏺</div>
+            <div class="room-body">
+              <h3>Гробницата на фараонот</h3>
+              <p>Древно проклетство и скриено богатство што чека да биде пронајдено.</p>
+              <ul class="room-info">
+                <li class="stars" title="Средно">★★<span class="star-empty">★</span></li>
+                <li>👥 3–6 играчи</li>
+                <li>⏱ 75 мин</li>
+              </ul>
+              <a href="soba-grobnica.html" class="room-link">Дознај повеќе →</a>
+            </div>
+          </article>
+
+          <article class="room-card">
+            <div class="room-image room-detective">🔍</div>
+            <div class="room-body">
+              <span class="badge">Добра за почетници</span>
+              <h3>Детективската канцеларија</h3>
+              <p>Решете го случајот пред убиецот да избега од градот.</p>
+              <ul class="room-info">
+                <li class="stars" title="Лесно">★<span class="star-empty">★★</span></li>
+                <li>👥 2–4 играчи</li>
+                <li>⏱ 60 мин</li>
+              </ul>
+              <a href="soba-detektivska.html" class="room-link">Дознај повеќе →</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. МНЕЊА ОД ИГРАЧИ -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Што велат играчите</h2>
+        <div class="reviews">
+          <blockquote class="review">
+            <div class="stars">★★★★★</div>
+            <p>„Најдобрите 60 минути оваа година! Излеговме со 2 минути вишок.“</p>
+            <footer>Марија, <span>Лабораторијата</span></footer>
+          </blockquote>
+          <blockquote class="review">
+            <div class="stars">★★★★★</div>
+            <p>„Одлично за тимбилдинг, сите колеги уживаа и веќе планираме следна соба.“</p>
+            <footer>Стефан, <span>Ќелија 13</span></footer>
+          </blockquote>
+          <blockquote class="review">
+            <div class="stars">★★★★★</div>
+            <p>„Бевме со деца од 11 години и беше совршено. Препорака за семејства!“</p>
+            <footer>Ана, <span>Детективската канцеларија</span></footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ЗАВРШЕН ПОВИК ЗА РЕЗЕРВАЦИЈА -->
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <h2>Спремни за предизвикот?</h2>
+          <p>Соберете го тимот, изберете соба и проверете дали можете да излезете за 60 минути.</p>
+          <a href="rezervacija.html" class="btn">Резервирај термин</a>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- ========== FOOTER ========== -->

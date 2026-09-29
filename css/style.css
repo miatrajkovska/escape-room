@@ -219,7 +219,271 @@ img {
   font-size: 0.85rem;
 }
 
-/* ---------- 5. Мобилен приказ ---------- */
+/* ---------- 5. Заеднички елементи (копчиња, делови) ---------- */
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  background-color: var(--gold);
+  color: var(--bg);
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btn:hover {
+  background-color: transparent;
+  color: var(--gold);
+  text-decoration: none;
+}
+
+/* Копче само со рамка */
+.btn-outline {
+  background-color: transparent;
+  color: var(--gold);
+}
+
+.btn-outline:hover {
+  background-color: var(--gold);
+  color: var(--bg);
+}
+
+/* Секој дел од страницата */
+.section {
+  padding: 80px 0;
+}
+
+/* Наизменична (посветла) позадина */
+.section-alt {
+  background-color: var(--card);
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  margin-bottom: 50px;
+}
+
+/* Кратка златна линија под насловот */
+.section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background-color: var(--gold);
+  margin: 15px auto 0;
+}
+
+.stars {
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.star-empty {
+  color: #4a4a55;
+}
+
+/* ---------- 6. Почетна страница ---------- */
+
+/* Hero */
+.hero {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  /* Засега градиент наместо слика: благ златен сјај во средина */
+  background: radial-gradient(circle at center, rgba(212, 160, 23, 0.18) 0%, var(--bg) 65%);
+}
+
+.hero h1 {
+  font-size: 5rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.hero-slogan {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  margin: 0 0 20px;
+}
+
+.hero-text {
+  max-width: 600px;
+  margin: 0 auto 35px;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Како функционира */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  text-align: center;
+}
+
+.step-number {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.step p {
+  color: var(--text-muted);
+}
+
+/* Картички за собите */
+.rooms {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.room-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;  /* сликата да ги следи заоблените агли */
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.room-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--gold);
+}
+
+/* Место за слика (засега градиент со икона) */
+.room-image {
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+}
+
+.room-lab       { background: linear-gradient(135deg, #0f3d2e, #1c1c24); }
+.room-cell      { background: linear-gradient(135deg, #3a3a44, #1c1c24); }
+.room-tomb      { background: linear-gradient(135deg, #5c4410, #1c1c24); }
+.room-detective { background: linear-gradient(135deg, #2b1f3d, #1c1c24); }
+
+.room-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;  /* сите картички да бидат еднакво високи */
+}
+
+.room-body h3 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.room-body p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 15px;
+}
+
+.room-info {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 0.9rem;
+}
+
+.room-link {
+  margin-top: auto;  /* линкот секогаш најдолу во картичката */
+  font-weight: 600;
+}
+
+.badge {
+  align-self: flex-start;
+  background-color: var(--gold);
+  color: var(--bg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+
+/* Мнења од играчи */
+.reviews {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.review {
+  margin: 0;
+  background-color: var(--bg);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px;
+  padding: 25px;
+}
+
+.review p {
+  font-style: italic;
+  margin: 10px 0 15px;
+}
+
+.review footer {
+  font-weight: 600;
+}
+
+.review footer span {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Завршен повик за резервација */
+.cta {
+  text-align: center;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 50px 20px;
+  background: radial-gradient(circle at center, rgba(212, 160, 23, 0.12) 0%, var(--card) 70%);
+}
+
+.cta h2 {
+  font-size: 2.2rem;
+  text-transform: uppercase;
+}
+
+.cta p {
+  color: var(--text-muted);
+  margin: 0 0 25px;
+}
+
+/* ---------- 7. Мобилен приказ ---------- */
+
+/* Собите во 2 колони кога екранот е потесен */
+@media (max-width: 1100px) {
+  .rooms {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
   .menu-toggle {
     display: block;
@@ -252,5 +516,41 @@ img {
   .footer-grid {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  /* Почетна: чекорите и мнењата една под друга */
+  .steps,
+  .reviews {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 2.8rem;
+    letter-spacing: 2px;
+  }
+
+  .hero-slogan {
+    font-size: 1.3rem;
+  }
+
+  /* Копчињата еден под друг */
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rooms {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title,
+  .cta h2 {
+    font-size: 1.8rem;
   }
 }
