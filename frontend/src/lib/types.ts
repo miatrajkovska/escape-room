@@ -25,7 +25,7 @@ export type Room = {
   best_time: number | null;
 };
 
-export type RoomTheme = "lab" | "prison" | "tomb" | "detective";
+export type RoomTheme = "lab" | "prison" | "tomb" | "detective" | "other";
 
 export type Slot = { time: string; available: boolean };
 export type CalendarDay = { date: string; free: number; total: number };
@@ -100,6 +100,9 @@ export type ContactMessage = {
   is_read: boolean;
   created_at: string;
 };
+
+// Соба во админ прегледот (со статистика)
+export type AdminRoom = Room & { upcoming_bookings: number; revenue: number };
 
 export type AdminStats = {
   users: number;

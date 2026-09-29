@@ -50,3 +50,22 @@ class LeaderboardIn(BaseModel):
     hints_used: int = Field(default=0, ge=0, le=20)
     played_on: date
 
+
+class RoomIn(BaseModel):
+    # Нова escape соба (админ)
+    slug: str = Field(pattern=r"^[a-z0-9-]{2,60}$")
+    name_mk: str = Field(min_length=2, max_length=100)
+    name_en: str = Field(min_length=2, max_length=100)
+    tagline_mk: str = Field(min_length=2, max_length=200)
+    tagline_en: str = Field(min_length=2, max_length=200)
+    description_mk: str = Field(min_length=10)
+    description_en: str = Field(min_length=10)
+    highlights_mk: list[str] = []
+    highlights_en: list[str] = []
+    difficulty: int = Field(ge=1, le=3)
+    min_players: int = Field(ge=2, le=6)
+    max_players: int = Field(ge=2, le=6)
+    duration_min: int = Field(ge=30, le=120)
+    min_age: int = Field(default=12, ge=6, le=18)
+    success_rate: int = Field(default=50, ge=0, le=100)
+    theme: str = Field(default="other", max_length=30)

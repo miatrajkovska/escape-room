@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session, joinedload
 
 from ..auth import require_admin
 from ..db import get_db
-from ..models import Booking, ContactMessage, GameScore, LeaderboardEntry, User
+from ..models import Booking, ContactMessage, GameScore, LeaderboardEntry, Room, User
 from ..pricing import local_now
-from ..schemas import BookingStatusIn, LeaderboardIn
-from ..serializers import booking_out, leaderboard_out, user_out
+from ..schemas import BookingStatusIn, LeaderboardIn, RoomIn
+from ..serializers import booking_out, leaderboard_out, room_out, user_out
 from .rooms import get_room_or_404
 
 router = APIRouter(prefix="/api/admin", tags=["admin"], dependencies=[Depends(require_admin)])
@@ -116,3 +116,47 @@ def delete_leaderboard(entry_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"ok": True}
 
+
+@router.get("/rooms")
+def rooms_overview(db: Session = Depends(get_db)):
+    # Преглед на собите со број на резервации и приход по соба
+    today = local_now().date()
+    rows = db.execute(
+        select(
+            Room,
+            func.count(Booking.id).filter(Booking.status != "cancelled", Booking.date >= today),
+            func.coalesce(func.sum(Booking.price).filter(Booking.status == "completed"), 0),
+        )
+        .outerjoin(Booking, Booking.room_id == Room.id)
+        .group_by(Room.id)
+        .order_by(Room.sort_order)
+    ).all()
+    return [room_out(r) | {"upcoming_bookings": up, "revenue": rev} for r, up, rev in rows]
+
+
+@router.post("/rooms")
+def add_room(data: RoomIn, db: Session = Depends(get_db)):
+    if data.min_players > data.max_players:
+        raise HTTPException(400, "Min players must be <= max players")
+    if db.scalar(select(Room).where(Room.slug == data.slug)):
+        raise HTTPException(409, "A room with this slug already exists")
+    last = db.scalar(select(func.max(Room.sort_order))) or 0
+    room = Room(
+        **data.model_dump(exclude={"highlights_mk", "highlights_en"}),
+        # Точките се чуваат како еден текст одделен со "|"
+        highlights_mk="|".join(h.strip() for h in data.highlights_mk if h.strip()),
+        highlights_en="|".join(h.strip() for h in data.highlights_en if h.strip()),
+        sort_order=last + 1,
+    )
+    db.add(room)
+    db.commit()
+    return room_out(room)
+
+
+@router.delete("/rooms/{slug}")
+def delete_room(slug: str, db: Session = Depends(get_db)):
+    # Бришењето ги брише и резервациите и рекордите за собата (CASCADE)
+    room = get_room_or_404(db, slug)
+    db.delete(room)
+    db.commit()
+    return {"ok": True}

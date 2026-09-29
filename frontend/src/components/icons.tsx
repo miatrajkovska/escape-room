@@ -335,4 +335,5 @@ export const themeIcon = {
   prison: BarsIcon,
   tomb: PyramidIcon,
   detective: MagnifierIcon,
+  other: PuzzleIcon, // за нови соби без посебна илустрација
 } as const;

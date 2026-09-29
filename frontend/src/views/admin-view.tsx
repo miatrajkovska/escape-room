@@ -7,11 +7,12 @@ import { ErrorState, LoadingNote, PageHeader, RankCell } from "@/components/shar
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLang } from "@/i18n/provider";
 import { api, useApi } from "@/lib/api";
 import { formatDate, formatDuration, formatPrice, pick, toIsoDate } from "@/lib/format";
-import type { AdminStats, Booking, ContactMessage, LeaderboardRow, Room, User } from "@/lib/types";
+import type { AdminRoom, AdminStats, Booking, ContactMessage, LeaderboardRow, Room, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { StatusBadge, useRequireUser } from "./profile-view";
 
@@ -39,11 +40,13 @@ export function AdminView() {
         <Tabs defaultValue="bookings" className="mt-10">
           <TabsList className="mb-6 h-10! flex-wrap">
             <TabsTrigger value="bookings" className="px-4">{t.admin.bookings}</TabsTrigger>
+            <TabsTrigger value="rooms" className="px-4">{t.admin.rooms}</TabsTrigger>
             <TabsTrigger value="messages" className="px-4">{t.admin.messages}</TabsTrigger>
             <TabsTrigger value="leaderboard" className="px-4">{t.admin.leaderboard}</TabsTrigger>
             <TabsTrigger value="users" className="px-4">{t.admin.users}</TabsTrigger>
           </TabsList>
           <TabsContent value="bookings"><BookingsTab /></TabsContent>
+          <TabsContent value="rooms"><RoomsTab /></TabsContent>
           <TabsContent value="messages"><MessagesTab /></TabsContent>
           <TabsContent value="leaderboard"><LeaderboardTab /></TabsContent>
           <TabsContent value="users"><UsersTab /></TabsContent>
@@ -152,6 +155,162 @@ function BookingsTab() {
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+// Празна форма за нова соба
+const emptyRoom = {
+  slug: "", name_mk: "", name_en: "", tagline_mk: "", tagline_en: "",
+  description_mk: "", description_en: "", highlights_mk: "", highlights_en: "",
+  difficulty: "2", min_players: "2", max_players: "6", duration_min: "60",
+  min_age: "12", success_rate: "50", theme: "other",
+};
+
+function RoomsTab() {
+  const { t, lang } = useLang();
+  const rooms = useApi<AdminRoom[]>("/api/admin/rooms");
+  const [form, setForm] = useState(emptyRoom);
+
+  async function add(e: React.FormEvent) {
+    e.preventDefault();
+    // Истакнатите точки се пишуваат по една во ред
+    const lines = (text: string) => text.split("\n").map((l) => l.trim()).filter(Boolean);
+    try {
+      await api("/api/admin/rooms", {
+        method: "POST",
+        body: {
+          ...form,
+          highlights_mk: lines(form.highlights_mk),
+          highlights_en: lines(form.highlights_en),
+          difficulty: Number(form.difficulty),
+          min_players: Number(form.min_players),
+          max_players: Number(form.max_players),
+          duration_min: Number(form.duration_min),
+          min_age: Number(form.min_age),
+          success_rate: Number(form.success_rate),
+        },
+      });
+      toast.success(t.admin.roomAdded);
+      setForm(emptyRoom);
+      rooms.reload();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t.common.error);
+    }
+  }
+
+  async function remove(slug: string) {
+    if (!confirm(t.admin.deleteRoomConfirm)) return;
+    try {
+      await api(`/api/admin/rooms/${slug}`, { method: "DELETE" });
+      toast.success(t.admin.roomDeleted);
+      rooms.reload();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t.common.error);
+    }
+  }
+
+  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm({ ...form, [key]: e.target.value });
+
+  const field = (key: keyof typeof form, label: string, extra: React.ComponentProps<typeof Input> = {}) => (
+    <div>
+      <Label htmlFor={`room-${key}`} className="mb-1.5 block text-xs">{label}</Label>
+      <Input id={`room-${key}`} required value={form[key]} onChange={set(key)} {...extra} />
+    </div>
+  );
+
+  const area = (key: keyof typeof form, label: string, required = true) => (
+    <div>
+      <Label htmlFor={`room-${key}`} className="mb-1.5 block text-xs">{label}</Label>
+      <Textarea id={`room-${key}`} required={required} rows={3} value={form[key]} onChange={set(key)} />
+    </div>
+  );
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
+      {/* Преглед на постоечките соби */}
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card p-5">
+        {!rooms.data ? (
+          <LoadingNote />
+        ) : (
+          <table className="w-full min-w-[520px] text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-xs uppercase text-muted-foreground">
+                <th className="py-2 pr-3">{t.booking.room}</th>
+                <th className="py-2 pr-3">{t.common.players}</th>
+                <th className="py-2 pr-3 text-center">{t.admin.upcoming}</th>
+                <th className="py-2 pr-3 text-right">{t.admin.revenue}</th>
+                <th className="py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {rooms.data.map((r) => (
+                <tr key={r.slug} className="border-b border-border/60 last:border-0">
+                  <td className="py-2 pr-3">
+                    <div className="font-medium">{pick(r, "name", lang)}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {t.common.difficulty[r.difficulty]} · {r.duration_min} {t.common.minutes}
+                    </div>
+                  </td>
+                  <td className="py-2 pr-3">{r.min_players}–{r.max_players}</td>
+                  <td className="py-2 pr-3 text-center">{r.upcoming_bookings}</td>
+                  <td className="py-2 pr-3 text-right">{formatPrice(r.revenue, lang)}</td>
+                  <td className="py-2 text-right">
+                    <Button variant="ghost" size="sm" className="text-destructive" onClick={() => remove(r.slug)}>
+                      {t.admin.delete}
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Форма за нова соба */}
+      <form onSubmit={add} className="space-y-3 rounded-2xl border border-border bg-card p-5">
+        <h3 className="text-lg uppercase text-primary">{t.admin.addRoom}</h3>
+        {field("slug", t.admin.slug, { pattern: "[a-z0-9\\-]{2,60}", placeholder: "vampirski-zamok" })}
+        <div className="grid grid-cols-2 gap-2">
+          {field("name_mk", t.admin.nameMk, { minLength: 2 })}
+          {field("name_en", t.admin.nameEn, { minLength: 2 })}
+        </div>
+        {field("tagline_mk", t.admin.taglineMk, { minLength: 2 })}
+        {field("tagline_en", t.admin.taglineEn, { minLength: 2 })}
+        {area("description_mk", t.admin.descriptionMk)}
+        {area("description_en", t.admin.descriptionEn)}
+        {area("highlights_mk", t.admin.highlightsMk, false)}
+        {area("highlights_en", t.admin.highlightsEn, false)}
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label htmlFor="room-difficulty" className="mb-1.5 block text-xs">{t.admin.difficulty}</Label>
+            <select id="room-difficulty" className={cn(selectClass, "w-full")} value={form.difficulty} onChange={set("difficulty")}>
+              {[1, 2, 3].map((d) => (
+                <option key={d} value={d}>{t.common.difficulty[d]}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="room-theme" className="mb-1.5 block text-xs">{t.admin.theme}</Label>
+            <select id="room-theme" className={cn(selectClass, "w-full")} value={form.theme} onChange={set("theme")}>
+              {(Object.keys(t.admin.themes) as (keyof typeof t.admin.themes)[]).map((k) => (
+                <option key={k} value={k}>{t.admin.themes[k]}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {field("min_players", t.admin.minPlayers, { type: "number", min: 2, max: 6 })}
+          {field("max_players", t.admin.maxPlayers, { type: "number", min: 2, max: 6 })}
+          {field("duration_min", t.admin.duration, { type: "number", min: 30, max: 120 })}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {field("min_age", t.admin.minAge, { type: "number", min: 6, max: 18 })}
+          {field("success_rate", t.admin.successRate, { type: "number", min: 0, max: 100 })}
+        </div>
+        <Button type="submit" className="w-full" size="lg">{t.admin.addRoom}</Button>
+      </form>
     </div>
   );
 }
