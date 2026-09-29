@@ -475,7 +475,245 @@ img {
   margin: 0 0 25px;
 }
 
-/* ---------- 7. Мобилен приказ ---------- */
+/* ---------- 7. Страница Соби ---------- */
+
+/* Воведен дел на внатрешните страници (помал од hero на почетната) */
+.page-hero {
+  padding: 90px 0 70px;
+  text-align: center;
+  background: radial-gradient(ellipse at top, rgba(212, 160, 23, 0.16) 0%, var(--bg) 60%);
+  border-bottom: 1px solid var(--border);
+}
+
+.page-hero h1 {
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+}
+
+/* Мал златен текст над насловот */
+.eyebrow {
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.page-hero-text {
+  max-width: 650px;
+  margin: 0 auto 35px;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.hero-stats {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px 40px;
+  color: var(--text-muted);
+}
+
+.hero-stats strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--gold);
+}
+
+/* Филтер копчиња */
+.filter-bar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.filter-btn {
+  background-color: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 8px 22px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: var(--gold);
+}
+
+/* Избраното копче (класата ја менува main.js) */
+.filter-btn.active {
+  background-color: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
+}
+
+/* Листа на соби: една широка картичка по ред */
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.room-row {
+  display: grid;
+  grid-template-columns: 320px 1fr;  /* лево слика, десно текст */
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.room-row:hover {
+  border-color: var(--gold);
+  box-shadow: 0 10px 30px rgba(212, 160, 23, 0.12);
+}
+
+/* Скриена соба при филтрирање (мора да е после .room-row) */
+.hidden {
+  display: none;
+}
+
+.room-row-image {
+  position: relative;  /* за ознаката за тежина горе лево */
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.room-row-icon {
+  font-size: 5rem;
+  transition: transform 0.3s;
+}
+
+.room-row:hover .room-row-icon {
+  transform: scale(1.1);
+}
+
+.difficulty-tag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 3px 12px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tag-easy   { background-color: #2e7d4f; color: #fff; }
+.tag-medium { background-color: var(--gold); color: var(--bg); }
+.tag-hard   { background-color: #b3261e; color: #fff; }
+
+.room-row-body {
+  padding: 30px;
+}
+
+.room-tagline {
+  color: var(--gold);
+  font-style: italic;
+  margin: 0 0 5px;
+}
+
+.room-row-body h2 {
+  font-size: 2rem;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.room-row-body h2 .badge {
+  vertical-align: middle;
+  font-family: var(--font-body);
+  text-transform: none;
+}
+
+.room-row-body > p {
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+
+/* Детали за собата во мала мрежа */
+.room-stats {
+  list-style: none;
+  padding: 15px 0;
+  margin: 0 0 25px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  font-weight: 600;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.room-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.room-note {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 30px 0 0;
+}
+
+/* Која соба е за вас */
+.guide {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.guide-card {
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.guide-card p {
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+
+.guide-card strong {
+  color: var(--text);
+}
+
+/* ---------- 8. Мобилен приказ ---------- */
 
 /* Собите во 2 колони кога екранот е потесен */
 @media (max-width: 1100px) {
@@ -520,8 +758,22 @@ img {
 
   /* Почетна: чекорите и мнењата една под друга */
   .steps,
-  .reviews {
+  .reviews,
+  .guide {
     grid-template-columns: 1fr;
+  }
+
+  /* Соби: сликата оди над текстот */
+  .room-row {
+    grid-template-columns: 1fr;
+  }
+
+  .room-row-image {
+    min-height: 180px;
+  }
+
+  .room-stats {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .section {
@@ -552,5 +804,27 @@ img {
   .section-title,
   .cta h2 {
     font-size: 1.8rem;
+  }
+
+  .page-hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .room-row-body {
+    padding: 20px;
+  }
+
+  .room-row-body h2 {
+    font-size: 1.6rem;
+  }
+
+  .room-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Копчињата на цела ширина за полесно кликање */
+  .room-actions .btn {
+    flex: 1;
+    text-align: center;
   }
 }

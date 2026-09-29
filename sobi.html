@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Соби – Enigma Escape</title>
+  <meta name="description" content="Четири escape room соби во Enigma Escape: Лабораторијата, Ќелија 13, Гробницата на фараонот и Детективската канцеларија.">
+
+  <!-- Фонтови од Google Fonts (со кирилица) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">Enigma Escape</a>
+
+      <!-- Хамбургер копче (само на мобилен) -->
+      <button class="menu-toggle" aria-label="Отвори мени" aria-expanded="false">&#9776;</button>
+
+      <nav class="main-nav">
+        <ul class="nav-links">
+          <li><a href="index.html">Почетна</a></li>
+          <li><a href="sobi.html" class="active">Соби</a></li>
+          <li><a href="ceni.html">Цени</a></li>
+          <li><a href="rezervacija.html">Резервација</a></li>
+          <li><a href="za-nas.html">За нас</a></li>
+          <li><a href="blog.html">Блог</a></li>
+          <li><a href="faq.html">ЧПП</a></li>
+          <li><a href="kontakt.html">Контакт</a></li>
+        </ul>
+
+        <!-- Промена на јазик: води до истата страница на англиски -->
+        <div class="lang-switch">
+          <span class="current">МК</span>
+          <a href="en/sobi.html" lang="en">EN</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========== СОДРЖИНА ========== -->
+  <main>
+
+    <!-- 1. ВОВЕД -->
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Изберете ја вашата мисија</p>
+        <h1>Нашите соби</h1>
+        <p class="page-hero-text">Секоја соба е посебна приказна со свои загатки, тајни и изненадувања.
+          Изберете тема, соберете го тимот и докажете дека можете да излезете пред да истече времето.</p>
+
+        <!-- Кратки бројки -->
+        <ul class="hero-stats">
+          <li><strong>4</strong> соби</li>
+          <li><strong>2–6</strong> играчи</li>
+          <li><strong>60–75</strong> минути</li>
+          <li><strong>10+</strong> години</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. ФИЛТЕР И СОБИ -->
+    <section class="section">
+      <div class="container">
+
+        <!-- Копчиња за филтер: data-filter кажува која тежина да се прикаже -->
+        <div class="filter-bar" aria-label="Филтрирај по тежина">
+          <button class="filter-btn active" data-filter="all" aria-pressed="true">Сите</button>
+          <button class="filter-btn" data-filter="easy" aria-pressed="false">★ Лесно</button>
+          <button class="filter-btn" data-filter="medium" aria-pressed="false">★★ Средно</button>
+          <button class="filter-btn" data-filter="hard" aria-pressed="false">★★★ Тешко</button>
+        </div>
+
+        <div class="room-list">
+
+          <!-- Лабораторијата -->
+          <article class="room-row" data-difficulty="hard">
+            <div class="room-row-image room-lab">
+              <span class="room-row-icon">🧪</span>
+              <span class="difficulty-tag tag-hard">Тешко</span>
+            </div>
+            <div class="room-row-body">
+              <p class="room-tagline">Вирусот е на слобода.</p>
+              <h2>Лабораторијата</h2>
+              <p>Д-р Ставрев исчезна без трага, а во неговата лабораторија остана отворена епрувета.
+                Имате 60 минути да го пронајдете противотровот пред вирусот да се рашири низ градот.</p>
+              <ul class="room-stats">
+                <li><span class="stat-label">Тежина</span><span class="stars">★★★</span></li>
+                <li><span class="stat-label">Играчи</span>2–5</li>
+                <li><span class="stat-label">Времетраење</span>60 мин</li>
+                <li><span class="stat-label">Возраст</span>14+</li>
+                <li><span class="stat-label">Цена по група</span>3.000 ден.</li>
+              </ul>
+              <div class="room-actions">
+                <a href="soba-laboratorija.html" class="btn">Повеќе</a>
+                <a href="rezervacija.html?soba=laboratorija" class="btn btn-outline">Резервирај</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Ќелија 13 -->
+          <article class="room-row" data-difficulty="medium">
+            <div class="room-row-image room-cell">
+              <span class="room-row-icon">⛓️</span>
+              <span class="difficulty-tag tag-medium">Средно</span>
+            </div>
+            <div class="room-row-body">
+              <p class="room-tagline">Стражарите се враќаат.</p>
+              <h2>Ќелија 13</h2>
+              <p>Осудени сте за злосторство што не сте го направиле. Ќелијата е заклучена,
+                а смената на стражарите завршува за 60 минути. Ова е вашата единствена шанса за бегство.</p>
+              <ul class="room-stats">
+                <li><span class="stat-label">Тежина</span><span class="stars">★★<span class="star-empty">★</span></span></li>
+                <li><span class="stat-label">Играчи</span>2–6</li>
+                <li><span class="stat-label">Времетраење</span>60 мин</li>
+                <li><span class="stat-label">Возраст</span>12+</li>
+                <li><span class="stat-label">Цена по група</span>3.000 ден.</li>
+              </ul>
+              <div class="room-actions">
+                <a href="soba-kelija-13.html" class="btn">Повеќе</a>
+                <a href="rezervacija.html?soba=kelija-13" class="btn btn-outline">Резервирај</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Гробницата на фараонот -->
+          <article class="room-row" data-difficulty="medium">
+            <div class="room-row-image room-tomb">
+              <span class="room-row-icon">🏺</span>
+              <span class="difficulty-tag tag-medium">Средно</span>
+            </div>
+            <div class="room-row-body">
+              <p class="room-tagline">Проклетството чека.</p>
+              <h2>Гробницата на фараонот</h2>
+              <p>Археолошката експедиција исчезна во гробницата на заборавениот фараон. Пробијте се низ
+                скриени премини, дешифрирајте ги хиероглифите и најдете го богатството, ако проклетството ви дозволи.</p>
+              <ul class="room-stats">
+                <li><span class="stat-label">Тежина</span><span class="stars">★★<span class="star-empty">★</span></span></li>
+                <li><span class="stat-label">Играчи</span>3–6</li>
+                <li><span class="stat-label">Времетраење</span>75 мин</li>
+                <li><span class="stat-label">Возраст</span>12+</li>
+                <li><span class="stat-label">Цена по група</span>3.500 ден.</li>
+              </ul>
+              <div class="room-actions">
+                <a href="soba-grobnica.html" class="btn">Повеќе</a>
+                <a href="rezervacija.html?soba=grobnica" class="btn btn-outline">Резервирај</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Детективската канцеларија -->
+          <article class="room-row" data-difficulty="easy">
+            <div class="room-row-image room-detective">
+              <span class="room-row-icon">🔍</span>
+              <span class="difficulty-tag tag-easy">Лесно</span>
+            </div>
+            <div class="room-row-body">
+              <p class="room-tagline">Убиецот се подготвува да избега.</p>
+              <h2>Детективската канцеларија <span class="badge">Добра за почетници</span></h2>
+              <p>Инспекторот ве повика во својата канцеларија. Доказите се тука, но времето истекува.
+                Поврзете ги трагите и откријте кој е убиецот пред да го напушти градот.</p>
+              <ul class="room-stats">
+                <li><span class="stat-label">Тежина</span><span class="stars">★<span class="star-empty">★★</span></span></li>
+                <li><span class="stat-label">Играчи</span>2–4</li>
+                <li><span class="stat-label">Времетраење</span>60 мин</li>
+                <li><span class="stat-label">Возраст</span>10+</li>
+                <li><span class="stat-label">Цена по група</span>2.400 ден.</li>
+              </ul>
+              <div class="room-actions">
+                <a href="soba-detektivska.html" class="btn">Повеќе</a>
+                <a href="rezervacija.html?soba=detektivska" class="btn btn-outline">Резервирај</a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="room-note">* Играчите под 16 години мора да бидат придружувани од возрасен.</p>
+      </div>
+    </section>
+
+    <!-- 3. КОЈА СОБА Е ЗА ВАС -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Која соба е за вас?</h2>
+        <div class="guide">
+          <div class="guide-card">
+            <span class="guide-icon">🌱</span>
+            <h3>Прв пат играте?</h3>
+            <p>Почнете со <strong>Детективската канцеларија</strong>. Логични загатки, пријатна атмосфера
+              и совршена за семејства со деца.</p>
+            <a href="soba-detektivska.html" class="room-link">Кон собата →</a>
+          </div>
+          <div class="guide-card">
+            <span class="guide-icon">👥</span>
+            <h3>Доаѓате со поголема група?</h3>
+            <p><strong>Ќелија 13</strong> и <strong>Гробницата на фараонот</strong> примаат до 6 играчи,
+              па секој ќе има свој дел од загатката.</p>
+            <a href="soba-grobnica.html" class="room-link">Кон собата →</a>
+          </div>
+          <div class="guide-card">
+            <span class="guide-icon">🔥</span>
+            <h3>Барате вистински предизвик?</h3>
+            <p><strong>Лабораторијата</strong> е нашата најтешка соба. Само мал дел од тимовите
+              излегуваат на време.</p>
+            <a href="soba-laboratorija.html" class="room-link">Кон собата →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ПОВИК ЗА ГРУПИ -->
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <h2>Роденден или тимбилдинг?</h2>
+          <p>За поголеми групи имаме посебни пакети. Може да резервирате и две соби во исто време
+            и да организирате натпревар меѓу тимовите.</p>
+          <a href="ceni.html" class="btn">Види ги пакетите</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3>Enigma Escape</h3>
+          <p class="slogan">„Имате 60 минути. Излезете ако можете.“</p>
+          <p>Четири тематски соби полни со загатки, тајни и адреналин.</p>
+        </div>
+
+        <div>
+          <h3>Брзи линкови</h3>
+          <ul>
+            <li><a href="sobi.html">Соби</a></li>
+            <li><a href="ceni.html">Цени и ваучери</a></li>
+            <li><a href="rezervacija.html">Резервација</a></li>
+            <li><a href="faq.html">Често поставувани прашања</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Контакт</h3>
+          <ul>
+            <li>ул. Македонија 25, Скопје</li>
+            <li><a href="tel:+38970123456">070 123 456</a></li>
+            <li><a href="mailto:info@enigmaescape.mk">info@enigmaescape.mk</a></li>
+            <li>Секој ден: 12:00 – 23:00</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; 2026 Enigma Escape. Сите права задржани.</span>
+        <a href="politika-za-privatnost.html">Политика за приватност</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
