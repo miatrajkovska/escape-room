@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { KeyholeIcon } from "@/components/icons";
+import { EyeIcon, KeyholeIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { fill, useLang } from "@/i18n/provider";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 // Каде да се оди по најава (само внатрешни адреси)
 function useNext() {
@@ -32,13 +33,30 @@ function AuthCard({ title, subtitle, children }: { title: string; subtitle: stri
   );
 }
 
-function Field({ id, label, hint, ...props }: { id: string; label: string; hint?: string } & React.ComponentProps<typeof Input>) {
+function Field({ id, label, hint, type, ...props }: { id: string; label: string; hint?: string } & React.ComponentProps<typeof Input>) {
+  const { t } = useLang();
+  // За лозинка: копче со око за прикажи/скриј
+  const [show, setShow] = useState(false);
+  const isPassword = type === "password";
   return (
     <div>
       <Label htmlFor={id} className="mb-2 block">
         {label}
       </Label>
-      <Input id={id} required className="h-11" {...props} />
+      <div className="relative">
+        <Input id={id} required className={cn("h-11", isPassword && "pr-11")} type={isPassword && show ? "text" : type} {...props} />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShow(!show)}
+            className={cn("absolute inset-y-0 right-0 flex w-11 items-center justify-center transition hover:text-primary", show ? "text-primary" : "text-muted-foreground")}
+            aria-label={show ? t.auth.hidePassword : t.auth.showPassword}
+            aria-pressed={show}
+          >
+            <EyeIcon className="size-5" />
+          </button>
+        )}
+      </div>
       {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
     </div>
   );

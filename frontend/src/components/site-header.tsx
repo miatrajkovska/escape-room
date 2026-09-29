@@ -62,21 +62,20 @@ function UserMenu() {
       </Link>
     );
   }
-  const initials = user.name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const firstName = user.name.split(" ")[0];
   return (
     <DropdownMenu>
+      {/* Копче со првата буква во круг и целото прво име */}
       <DropdownMenuTrigger
         render={
-          <button className="flex size-9 items-center justify-center rounded-full border border-primary/50 bg-primary/10 font-heading text-sm text-primary transition hover:bg-primary/20" />
+          <button className="flex h-9 max-w-40 items-center gap-2 rounded-full border border-primary/50 bg-primary/10 py-1 pl-1 pr-3 text-sm text-primary transition hover:bg-primary/20" />
         }
         aria-label={user.name}
       >
-        {initials}
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-xs text-primary-foreground">
+          {firstName[0]?.toUpperCase()}
+        </span>
+        <span className="truncate font-medium">{firstName}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
         <div className="px-2 py-1.5">
@@ -177,7 +176,7 @@ export function SiteHeader() {
                 <LangSwitch className="self-start" />
                 {user ? (
                   <Link href="/profile" onClick={() => setOpen(false)} className={buttonVariants({ variant: "outline", size: "xl" })}>
-                    {t.nav.profile}
+                    {t.nav.profile} · {user.name.split(" ")[0]}
                   </Link>
                 ) : (
                   <Link href="/login" onClick={() => setOpen(false)} className={buttonVariants({ variant: "outline", size: "xl" })}>

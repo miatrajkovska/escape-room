@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircleIcon, themeIcon } from "@/components/icons";
+import { CalendarIcon, CheckCircleIcon, themeIcon } from "@/components/icons";
 import { Difficulty, ErrorState, LoadingNote, PageHeader } from "@/components/shared";
 import { useLang } from "@/i18n/provider";
 import { ApiError, api, useApi } from "@/lib/api";
@@ -98,6 +98,15 @@ export function BookingView() {
       }
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function copyCode(code: string) {
+    try {
+      await navigator.clipboard.writeText(code);
+      toast.success(t.booking.copied);
+    } catch {
+      toast.error(t.common.error);
     }
   }
 
@@ -297,6 +306,26 @@ export function BookingView() {
                 {pick({ name_mk: confirmed.room_name_mk, name_en: confirmed.room_name_en }, "name", lang)} ·{" "}
                 {formatDate(confirmed.date, lang, { month: "short" })}, {confirmed.time} · {formatPrice(confirmed.price, lang)}
               </div>
+              {/* Копирај код и додај во календар */}
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => copyCode(confirmed.code)}>
+                  {t.booking.copyCode}
+                </Button>
+                <a
+                  href={googleCalendarUrl(
+                    confirmed,
+                    room?.duration_min ?? 60,
+                    `Press Esc – ${pick({ name_mk: confirmed.room_name_mk, name_en: confirmed.room_name_en }, "name", lang)}`,
+                    `${t.admin.code}: ${confirmed.code}`,
+                    t.contact.addressValue
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                  <CalendarIcon /> {t.booking.addToCalendar}
+                </a>
+              </div>
             </div>
           )}
           <DialogFooter className="gap-2 sm:justify-center">
@@ -311,6 +340,25 @@ export function BookingView() {
       </Dialog>
     </>
   );
+}
+
+// Линк што отвора Google Calendar со пополнет настан за резервацијата
+function googleCalendarUrl(b: Booking, minutes: number, title: string, details: string, location: string) {
+  const start = new Date(`${b.date}T${b.time}:00`);
+  const end = new Date(start.getTime() + minutes * 60000);
+  // Формат 20261005T180000 (локално време, зоната е во ctz)
+  const fmt = (d: Date) =>
+    `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}T` +
+    `${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}00`;
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: title,
+    dates: `${fmt(start)}/${fmt(end)}`,
+    ctz: "Europe/Skopje",
+    details,
+    location,
+  });
+  return `https://calendar.google.com/calendar/render?${params}`;
 }
 
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
