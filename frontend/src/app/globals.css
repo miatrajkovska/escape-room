@@ -1,0 +1,150 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-oswald);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-success: var(--success);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Темна тема со златни акценти (сајтот е секогаш темен) */
+:root {
+  --background: #0f0f14;
+  --foreground: #eaeaea;
+  --card: #1c1c24;
+  --card-foreground: #eaeaea;
+  --popover: #1c1c24;
+  --popover-foreground: #eaeaea;
+  --primary: #d4a017;
+  --primary-foreground: #14110a;
+  --secondary: #262630;
+  --secondary-foreground: #eaeaea;
+  --muted: #22222b;
+  --muted-foreground: #9d9dab;
+  --accent: #2a2a35;
+  --accent-foreground: #eaeaea;
+  --destructive: #ef5350;
+  --border: rgb(255 255 255 / 0.09);
+  --input: rgb(255 255 255 / 0.14);
+  --ring: #d4a017;
+  --gold: #d4a017;
+  --gold-soft: #f3d27a;
+  --success: #4caf7d;
+  --radius: 0.75rem;
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading tracking-wide;
+  }
+}
+
+@layer utilities {
+  /* Златен текст со преливање */
+  .text-gold-gradient {
+    background: linear-gradient(180deg, #f7dc8c 0%, #d4a017 55%, #9c7410 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* Суптилна мрежа во позадина */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(212 160 23 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(212 160 23 / 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .glow-gold {
+    box-shadow: 0 0 0 1px rgb(212 160 23 / 0.35), 0 10px 40px -10px rgb(212 160 23 / 0.35);
+  }
+  .card-hover {
+    @apply transition duration-300 hover:-translate-y-1 hover:border-primary/40;
+  }
+}
+
+/* Трепкање како стара сијалица (за тајмерот) */
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.55; }
+}
+.animate-flicker { animation: flicker 6s infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-14px) rotate(var(--r, 0deg)); }
+}
+.animate-float { animation: float 7s ease-in-out infinite; }
+
+@keyframes swing {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+.animate-swing { animation: swing 4s ease-in-out infinite; transform-origin: top center; }
+
+/* Картичките во Memory играта се вртат */
+.flip-card { perspective: 800px; }
+.flip-inner { transition: transform 0.45s; transform-style: preserve-3d; }
+.flip-card[data-flipped="true"] .flip-inner { transform: rotateY(180deg); }
+.flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flicker, .animate-float, .animate-swing { animation: none; }
+}
+
+/* Точки под деновите во календарот за резервации */
+.day-free button::after,
+.day-few button::after,
+.day-full button::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 9999px;
+}
+.day-free button::after { background: var(--success); }
+.day-few button::after { background: var(--gold); }
+.day-full button::after { background: var(--destructive); }
