@@ -16,10 +16,10 @@ const oswald = Oswald({ variable: "--font-oswald", subsets: ["latin", "cyrillic"
 
 export const metadata: Metadata = {
   title: {
-    default: "Enigma Escape – Escape room Скопје",
-    template: "%s | Enigma Escape",
+    default: "Press Esc – Escape room Скопје",
+    template: "%s | Press Esc",
   },
-  description: "Имате 60 минути. Излезете ако можете. Четири escape соби во Скопје.",
+  description: "Излезот е внатре. Четири escape соби во Скопје.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

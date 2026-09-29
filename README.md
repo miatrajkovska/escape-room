@@ -1,4 +1,6 @@
-# Enigma Escape
+# Press Esc
+
+*Излезот е внатре. / The Way Out Is In.*
 
 Веб-страница за измислена escape room фирма (студентски проект, Деловна пракса – ФИНКИ 2025/2026).
 
@@ -28,8 +30,8 @@ npm run dev
 ## Демо профили
 | Е-пошта | Лозинка | Улога |
 |---|---|---|
-| demo@enigma.mk | demo123 | корисник (има резервации) |
-| admin@enigma.mk | admin123 | администратор |
+| demo@pressesc.mk | demo123 | корисник (има резервации) |
+| admin@pressesc.mk | admin123 | администратор |
 | mia@test.com | mia | администратор |
 
 Ресет на демо податоците: `cd backend && .venv/Scripts/python -m app.seed --reset`

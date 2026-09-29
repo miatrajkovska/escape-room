@@ -19,9 +19,9 @@ router = APIRouter(prefix="/api/bookings", tags=["bookings"])
 
 
 def new_code() -> str:
-    # Краток код за резервацијата, на пр. EN-7K2Q9
+    # Краток код за резервацијата, на пр. PE-7K2Q9
     alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-    return "EN-" + "".join(secrets.choice(alphabet) for _ in range(5))
+    return "PE-" + "".join(secrets.choice(alphabet) for _ in range(5))
 
 
 @router.post("")

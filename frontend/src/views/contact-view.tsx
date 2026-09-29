@@ -36,7 +36,7 @@ export function ContactView() {
   const info = [
     { icon: MapPinIcon, label: t.contact.address, lines: [t.contact.addressValue] },
     { icon: PhoneIcon, label: t.contact.phone, lines: ["+389 70 123 456"] },
-    { icon: MailIcon, label: t.contact.email, lines: ["info@enigma-escape.mk"] },
+    { icon: MailIcon, label: t.contact.email, lines: ["info@pressesc.mk"] },
     { icon: HourglassIcon, label: t.contact.hours, lines: t.contact.hoursValue },
   ];
 

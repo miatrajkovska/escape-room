@@ -28,7 +28,7 @@ export function SiteFooter() {
           <Link href="/" className="flex items-center gap-2.5">
             <Logo className="size-9" />
             <span className="font-heading text-xl tracking-wider">
-              ENIGMA <span className="text-primary">ESCAPE</span>
+              PRESS <span className="text-primary">ESC</span>
             </span>
           </Link>
           <p className="mt-4 text-sm text-muted-foreground">{t.footer.tagline}</p>
@@ -45,7 +45,7 @@ export function SiteFooter() {
               <PhoneIcon className="size-4 shrink-0 text-primary" /> +389 70 123 456
             </li>
             <li className="flex gap-2">
-              <MailIcon className="size-4 shrink-0 text-primary" /> info@enigma-escape.mk
+              <MailIcon className="size-4 shrink-0 text-primary" /> info@pressesc.mk
             </li>
           </ul>
         </div>
@@ -53,7 +53,7 @@ export function SiteFooter() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
           <span>
-            © {new Date().getFullYear()} Enigma Escape. {t.footer.rights}
+            © {new Date().getFullYear()} Press Esc. {t.footer.rights}
           </span>
           <span>{t.footer.student}</span>
         </div>

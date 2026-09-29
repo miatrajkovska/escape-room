@@ -90,11 +90,11 @@ export function LoginView() {
       </p>
       <div className="mt-6 rounded-xl border border-dashed border-primary/40 p-4 text-sm">
         <p className="mb-2 text-xs uppercase tracking-wide text-primary">{t.auth.demoTitle}</p>
-        <button type="button" onClick={() => fillDemo("demo@enigma.mk", "demo123")} className="block w-full rounded-md px-2 py-1 text-left hover:bg-muted">
-          demo@enigma.mk / demo123
+        <button type="button" onClick={() => fillDemo("demo@pressesc.mk", "demo123")} className="block w-full rounded-md px-2 py-1 text-left hover:bg-muted">
+          demo@pressesc.mk / demo123
         </button>
-        <button type="button" onClick={() => fillDemo("admin@enigma.mk", "admin123")} className="block w-full rounded-md px-2 py-1 text-left hover:bg-muted">
-          admin@enigma.mk / admin123 <span className="text-muted-foreground">(admin)</span>
+        <button type="button" onClick={() => fillDemo("admin@pressesc.mk", "admin123")} className="block w-full rounded-md px-2 py-1 text-left hover:bg-muted">
+          admin@pressesc.mk / admin123 <span className="text-muted-foreground">(admin)</span>
         </button>
         <button type="button" onClick={() => fillDemo("mia@test.com", "mia")} className="block w-full rounded-md px-2 py-1 text-left hover:bg-muted">
           mia@test.com / mia <span className="text-muted-foreground">(admin)</span>

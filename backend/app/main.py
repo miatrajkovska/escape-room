@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Enigma Escape API", lifespan=lifespan)
+app = FastAPI(title="Press Esc API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,7 +34,7 @@ for r in (auth, rooms, bookings, leaderboard, games, content, admin):
 
 @app.get("/")
 def root():
-    return {"name": "Enigma Escape API", "docs": "/docs"}
+    return {"name": "Press Esc API", "docs": "/docs"}
 
 
 @app.get("/api/health")

@@ -57,7 +57,7 @@ export const mk = {
     required: "Задолжително поле",
   },
   footer: {
-    tagline: "Имате 60 минути. Излезете ако можете.",
+    tagline: "Излезот е внатре.",
     explore: "Истражи",
     info: "Информации",
     visit: "Посетете не",
@@ -72,7 +72,7 @@ export const mk = {
     more: "Повеќе",
   },
   home: {
-    eyebrow: "Escape room · Скопје",
+    eyebrow: "Излезот е внатре · Скопје",
     title1: "Имате 60 минути.",
     title2: "Излезете ако можете.",
     subtitle:
@@ -335,7 +335,7 @@ export const mk = {
     subtitle: "Група пријатели што премногу сакаат загатки.",
     storyTitle: "Нашата приказна",
     story: [
-      "Enigma Escape започна во 2019 година како хоби: четворица пријатели изградија една соба во изнајмен подрум. Првиот месец ја играа само пријателите. Вториот месец – пријателите на пријателите.",
+      "Press Esc започна во 2019 година како хоби: четворица пријатели изградија една соба во изнајмен подрум. Првиот месец ја играа само пријателите. Вториот месец – пријателите на пријателите.",
       "Денес имаме четири соби, повеќе од 12 000 играчи и тим од осум луѓе што ја градат секоја загатка рачно. Секоја соба ја тестираме со над 50 тимови пред да ја отвориме.",
     ],
     facts: [
@@ -354,7 +354,7 @@ export const mk = {
     team: [
       { name: "Мила Трајковска", role: "Основач и дизајнер на загатки" },
       { name: "Давид Николов", role: "Техника и електроника" },
-      { name: "Сара Јовановска", role: "Водител на игри" },
+      { name: "Христина Јовановска", role: "Водител на игри" },
       { name: "Петар Стојанов", role: "Сценографија" },
     ],
   },
@@ -407,7 +407,7 @@ export const mk = {
       { h: "Зошто ги користиме", p: "Само за резервации, најава и одговор на вашите пораки. Не ги продаваме и не ги споделуваме со трети страни." },
       { h: "Колачиња", p: "Користиме само неопходни колачиња и локално складирање: за избраниот јазик, за најавата и за вашиот избор за колачињата. Немаме рекламни колачиња." },
       { h: "Вашите права", p: "Можете да побарате увид, корекција или бришење на вашите податоци преку контакт формата." },
-      { h: "Напомена", p: "Ова е студентски проект. Фирмата Enigma Escape е измислена." },
+      { h: "Напомена", p: "Ова е студентски проект. Фирмата Press Esc е измислена." },
     ],
   },
   notFound: {
@@ -475,7 +475,7 @@ export const en: Dict = {
     required: "Required field",
   },
   footer: {
-    tagline: "You have 60 minutes. Escape if you can.",
+    tagline: "The Way Out Is In.",
     explore: "Explore",
     info: "Information",
     visit: "Visit us",
@@ -490,7 +490,7 @@ export const en: Dict = {
     more: "Learn more",
   },
   home: {
-    eyebrow: "Escape room · Skopje",
+    eyebrow: "The Way Out Is In · Skopje",
     title1: "You have 60 minutes.",
     title2: "Escape if you can.",
     subtitle:
@@ -753,7 +753,7 @@ export const en: Dict = {
     subtitle: "A group of friends who love puzzles a bit too much.",
     storyTitle: "Our story",
     story: [
-      "Enigma Escape started in 2019 as a hobby: four friends built one room in a rented basement. The first month only friends played it. The second month – friends of friends.",
+      "Press Esc started in 2019 as a hobby: four friends built one room in a rented basement. The first month only friends played it. The second month – friends of friends.",
       "Today we have four rooms, more than 12,000 players and a team of eight people who handcraft every puzzle. Every room is tested by 50+ teams before it opens.",
     ],
     facts: [
@@ -772,7 +772,7 @@ export const en: Dict = {
     team: [
       { name: "Mila Trajkovska", role: "Founder & puzzle designer" },
       { name: "David Nikolov", role: "Tech & electronics" },
-      { name: "Sara Jovanovska", role: "Game master" },
+      { name: "Hristina Jovanovska", role: "Game master" },
       { name: "Petar Stojanov", role: "Set design" },
     ],
   },
@@ -825,7 +825,7 @@ export const en: Dict = {
       { h: "Why we use it", p: "Only for bookings, login and replying to your messages. We never sell or share it with third parties." },
       { h: "Cookies", p: "We only use essential cookies and local storage: for your chosen language, your login and your cookie choice. No advertising cookies." },
       { h: "Your rights", p: "You can request access, correction or deletion of your data via the contact form." },
-      { h: "Note", p: "This is a student project. Enigma Escape is a fictional company." },
+      { h: "Note", p: "This is a student project. Press Esc is a fictional company." },
     ],
   },
   notFound: {

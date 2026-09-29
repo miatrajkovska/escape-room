@@ -271,8 +271,8 @@ def seed(db) -> None:
     db.add_all(rooms)
 
     # --- Корисници ---
-    admin = User(name="Администратор", email="admin@enigma.mk", password_hash=hash_password("admin123"), is_admin=True)
-    demo = User(name="Демо Корисник", email="demo@enigma.mk", password_hash=hash_password("demo123"))
+    admin = User(name="Администратор", email="admin@pressesc.mk", password_hash=hash_password("admin123"), is_admin=True)
+    demo = User(name="Демо Корисник", email="demo@pressesc.mk", password_hash=hash_password("demo123"))
     player_hash = hash_password("demo123")
     players = [User(name=n, email=e, password_hash=player_hash) for n, e in PLAYERS]
     db.add_all([admin, demo, *players])
@@ -283,7 +283,7 @@ def seed(db) -> None:
 
     def code() -> str:
         while True:
-            c = "EN-" + "".join(rnd.choice("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") for _ in range(5))
+            c = "PE-" + "".join(rnd.choice("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") for _ in range(5))
             if c not in codes:
                 codes.add(c)
                 return c
@@ -374,11 +374,21 @@ def ensure_admin(db) -> None:
         db.commit()
 
 
+def rename_demo_emails(db) -> None:
+    # Фирмата се преименуваше од Enigma Escape во Press Esc – ги менуваме и демо е-поштите
+    for old, new in [("demo@enigma.mk", "demo@pressesc.mk"), ("admin@enigma.mk", "admin@pressesc.mk")]:
+        user = db.scalar(select(User).where(User.email == old))
+        if user:
+            user.email = new
+            db.commit()
+
+
 def seed_if_empty() -> None:
     with SessionLocal() as db:
         if db.scalar(select(func.count(Room.id))) == 0:
             seed(db)
         ensure_admin(db)
+        rename_demo_emails(db)
 
 
 if __name__ == "__main__":

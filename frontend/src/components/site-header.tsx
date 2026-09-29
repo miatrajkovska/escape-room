@@ -118,10 +118,10 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2.5" aria-label="Enigma Escape">
+        <Link href="/" className="flex items-center gap-2.5" aria-label="Press Esc">
           <Logo className="size-9" />
           <span className="font-heading text-xl tracking-wider">
-            ENIGMA <span className="text-primary">ESCAPE</span>
+            PRESS <span className="text-primary">ESC</span>
           </span>
         </Link>
 
@@ -156,7 +156,7 @@ export function SiteHeader() {
             </SheetTrigger>
             <SheetContent side="right" className="w-72 p-6">
               <SheetTitle className="flex items-center gap-2 font-heading text-lg">
-                <Logo className="size-7" /> ENIGMA ESCAPE
+                <Logo className="size-7" /> PRESS ESC
               </SheetTitle>
               <nav className="mt-4 flex flex-col gap-1">
                 {[{ href: "/", key: "home" as const }, ...links].map((l) => (
