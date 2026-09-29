@@ -9,7 +9,7 @@ import { fill, useLang } from "@/i18n/provider";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatDuration } from "@/lib/format";
-import type { GameId } from "@/lib/types";
+import type { GameId, MyGameStats } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { GameLeaderboard } from "./game-leaderboard";
 
@@ -23,6 +23,19 @@ export function useGameSession(game: GameId) {
   const [rank, setRank] = useState<number | null>(null);
   const [boardVersion, setBoardVersion] = useState(0);
   const startedAt = useRef(0);
+  // Ref-ови за да ги знаеме статусот, потезите и корисникот и кога страницата се затвора
+  const statusRef = useRef<GameStatus>("idle");
+  const movesRef = useRef(0);
+  const userRef = useRef(user);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
+  const changeStatus = useCallback((s: GameStatus) => {
+    statusRef.current = s;
+    setStatus(s);
+  }, []);
 
   // Тајмерот се ажурира секоја секунда додека се игра
   useEffect(() => {
@@ -31,18 +44,52 @@ export function useGameSession(game: GameId) {
     return () => clearInterval(id);
   }, [status]);
 
+  // Изгубена или прекината игра – се зачувува за да се знае дека корисникот играл
+  const saveAttempt = useCallback(
+    (result: "lost" | "quit") => {
+      if (!userRef.current) return;
+      const seconds = Math.round((Date.now() - startedAt.current) / 1000);
+      api("/api/games/attempts", {
+        method: "POST",
+        body: { game, result, time_seconds: seconds, moves: movesRef.current },
+        keepalive: true,
+      }).catch(() => {});
+    },
+    [game]
+  );
+
+  // Ако корисникот ја напушти страницата среде игра, тоа се брои како прекината игра
+  useEffect(() => {
+    const onLeave = () => {
+      if (statusRef.current !== "playing") return;
+      statusRef.current = "idle";
+      saveAttempt("quit");
+    };
+    window.addEventListener("pagehide", onLeave);
+    return () => {
+      window.removeEventListener("pagehide", onLeave);
+      onLeave(); // корисникот отиде на друга страница во сајтот
+    };
+  }, [saveAttempt]);
+
   const start = useCallback(() => {
     startedAt.current = Date.now();
     setElapsed(0);
+    setFinalTime(0);
     setRank(null);
-    setStatus("playing");
+    changeStatus("playing");
+  }, [changeStatus]);
+
+  // Играта го јавува бројот на потези (за прекинати игри)
+  const trackMoves = useCallback((moves: number) => {
+    movesRef.current = moves;
   }, []);
 
   const win = useCallback(
     async (moves: number) => {
       const seconds = Math.max(3, Math.round((Date.now() - startedAt.current) / 1000));
       setFinalTime(seconds);
-      setStatus("won");
+      changeStatus("won");
       if (!user) return;
       try {
         const res = await api<{ rank: number | null }>("/api/games/scores", {
@@ -55,24 +102,39 @@ export function useGameSession(game: GameId) {
         // резултатот не е зачуван – не е критично
       }
     },
-    [game, user]
+    [game, user, changeStatus]
   );
 
   const lose = useCallback(() => {
     setFinalTime(Math.round((Date.now() - startedAt.current) / 1000));
-    setStatus("lost");
-  }, []);
+    changeStatus("lost");
+    saveAttempt("lost");
+  }, [saveAttempt, changeStatus]);
 
+  // „Почни одново“ – тајмерот се враќа на 0:00
   const reset = useCallback(() => {
-    setStatus("idle");
+    if (statusRef.current === "playing") saveAttempt("quit");
+    changeStatus("idle");
     setElapsed(0);
+    setFinalTime(0);
     setRank(null);
-  }, []);
+  }, [saveAttempt, changeStatus]);
 
-  return { status, elapsed, finalTime, rank, boardVersion, start, win, lose, reset, loggedIn: !!user };
+  return { status, elapsed, finalTime, rank, boardVersion, start, win, lose, reset, trackMoves, loggedIn: !!user };
 }
 
 type Session = ReturnType<typeof useGameSession>;
+
+// Краток опис на моите резултати, на пр. „1:23 · 8 потези · одиграно 5×“
+export function useMyGameSummary() {
+  const { t } = useLang();
+  return (stats: MyGameStats[GameId] | undefined) => {
+    if (!stats || stats.played === 0) return t.profile.notPlayed;
+    const played = fill(t.profile.playedTimes, { n: stats.played });
+    if (!stats.best) return `${t.profile.noWinYet} · ${played}`;
+    return `${formatDuration(stats.best.time_seconds)} · ${stats.best.moves} ${t.games.moves.toLowerCase()} · ${played}`;
+  };
+}
 
 export function GameLayout({
   game,
@@ -93,6 +155,10 @@ export function GameLayout({
   const info = t.games.list[game];
   const time = session.status === "playing" ? session.elapsed : session.finalTime;
 
+  // Потезите се чуваат во сесијата за да се зачуваат и ако играта се прекине
+  const { trackMoves } = session;
+  useEffect(() => trackMoves(moves), [trackMoves, moves]);
+
   return (
     <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_340px]">
       <div>
@@ -101,9 +167,15 @@ export function GameLayout({
         </Link>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
           <h1 className="text-gold-gradient text-5xl uppercase">{info.name}</h1>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Stat icon={HourglassIcon} label={t.games.time} value={formatDuration(time)} />
             <Stat icon={PuzzleIcon} label={t.games.moves} value={String(moves)} />
+            {/* Нова игра и среде игра (се брои како прекината) */}
+            {session.status === "playing" && (
+              <Button variant="outline" size="lg" onClick={onRestart}>
+                {t.games.restart}
+              </Button>
+            )}
           </div>
         </div>
 

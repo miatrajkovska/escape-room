@@ -29,7 +29,8 @@ export function setToken(token: string | null) {
   }
 }
 
-export async function api<T>(path: string, options: { method?: string; body?: unknown } = {}): Promise<T> {
+// keepalive: барањето се праќа и ако корисникот ја затвори страницата
+export async function api<T>(path: string, options: { method?: string; body?: unknown; keepalive?: boolean } = {}): Promise<T> {
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -38,6 +39,7 @@ export async function api<T>(path: string, options: { method?: string; body?: un
     method: options.method ?? "GET",
     headers,
     body: options.body ? JSON.stringify(options.body) : undefined,
+    keepalive: options.keepalive,
   });
 
   if (!res.ok) {

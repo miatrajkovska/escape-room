@@ -205,6 +205,7 @@ export const mk = {
     top: "Најдобри играчи",
     start: "Почни",
     again: "Играј повторно",
+    restart: "Почни одново",
     won: "Решено!",
     lost: "Времето/обидите истекоа",
     saved: "Резултатот е зачуван. Вие сте на {rank}. место!",
@@ -274,6 +275,8 @@ export const mk = {
     cancelled: "Резервацијата е откажана.",
     games: "Мои најдобри резултати",
     notPlayed: "Не е играно",
+    playedTimes: "одиграно {n}×",
+    noWinYet: "сè уште без победа",
     status: { confirmed: "Потврдена", completed: "Завршена", cancelled: "Откажана" },
   },
   admin: {
@@ -623,6 +626,7 @@ export const en: Dict = {
     top: "Top players",
     start: "Start",
     again: "Play again",
+    restart: "Start over",
     won: "Solved!",
     lost: "Out of time/attempts",
     saved: "Score saved. You are in place #{rank}!",
@@ -692,6 +696,8 @@ export const en: Dict = {
     cancelled: "Booking cancelled.",
     games: "My best scores",
     notPlayed: "Not played",
+    playedTimes: "played {n}×",
+    noWinYet: "no win yet",
     status: { confirmed: "Confirmed", completed: "Completed", cancelled: "Cancelled" },
   },
   admin: {

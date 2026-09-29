@@ -13,8 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLang } from "@/i18n/provider";
 import { api, useApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { formatDate, formatDuration, formatPrice, pick, toIsoDate } from "@/lib/format";
-import type { Booking, GameId } from "@/lib/types";
+import { useMyGameSummary } from "@/components/games/game-shell";
+import { formatDate, formatPrice, pick, toIsoDate } from "@/lib/format";
+import type { Booking, GameId, MyGameStats } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 // Пренасочи кон најава ако корисникот не е најавен
@@ -181,7 +182,8 @@ function BookingRow({ booking: b, onCancel }: { booking: Booking; onCancel?: () 
 
 function MyGames() {
   const { t } = useLang();
-  const mine = useApi<Record<GameId, { time_seconds: number; moves: number } | null>>("/api/games/me");
+  const mine = useApi<MyGameStats>("/api/games/me");
+  const summary = useMyGameSummary();
   const games: { id: GameId; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: "codebreaker", icon: KeyIcon },
     { id: "memory", icon: CardsIcon },
@@ -192,14 +194,13 @@ function MyGames() {
       <h2 className="mb-4 text-2xl uppercase">{t.profile.games}</h2>
       <div className="space-y-3">
         {games.map(({ id, icon: Icon }) => {
-          const best = mine.data?.[id];
           return (
             <Link key={id} href={`/games/${id}`} className="card-hover flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
               <Icon className="size-8 text-primary" />
               <div className="flex-1">
                 <p className="font-heading uppercase">{t.games.list[id].name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {!mine.data ? t.common.loading : best ? `${formatDuration(best.time_seconds)} · ${best.moves} ${t.games.moves.toLowerCase()}` : t.profile.notPlayed}
+                  {mine.data ? summary(mine.data[id]) : t.common.loading}
                 </p>
               </div>
               <span className="text-primary">→</span>

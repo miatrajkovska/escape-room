@@ -31,6 +31,13 @@ class GameScoreIn(BaseModel):
     moves: int = Field(ge=1, le=1000)
 
 
+class GameAttemptIn(BaseModel):
+    game: str
+    result: str = Field(pattern=r"^(lost|quit)$")
+    time_seconds: int = Field(ge=0, le=36000)
+    moves: int = Field(ge=0, le=1000)
+
+
 class ContactIn(BaseModel):
     name: str = Field(min_length=2, max_length=100)
     email: EmailStr

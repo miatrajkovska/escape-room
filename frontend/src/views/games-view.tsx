@@ -8,11 +8,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { useLang } from "@/i18n/provider";
 import { useApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { formatDuration } from "@/lib/format";
-import type { GameId } from "@/lib/types";
+import { useMyGameSummary } from "@/components/games/game-shell";
+import type { GameId, MyGameStats } from "@/lib/types";
 import { cn } from "@/lib/utils";
-
-type MyBest = Record<GameId, { time_seconds: number; moves: number } | null>;
 
 const GAMES: { id: GameId; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "codebreaker", icon: KeyIcon },
@@ -23,7 +21,8 @@ const GAMES: { id: GameId; icon: React.ComponentType<{ className?: string }> }[]
 export function GamesView() {
   const { t } = useLang();
   const { user } = useAuth();
-  const mine = useApi<MyBest>(user ? "/api/games/me" : null);
+  const mine = useApi<MyGameStats>(user ? "/api/games/me" : null);
+  const summary = useMyGameSummary();
 
   return (
     <>
@@ -31,7 +30,6 @@ export function GamesView() {
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 lg:grid-cols-3">
         {GAMES.map(({ id, icon: Icon }) => {
           const info = t.games.list[id];
-          const best = mine.data?.[id];
           return (
             <div key={id} className="card-hover flex flex-col overflow-hidden rounded-2xl border border-border bg-card">
               <div className="relative flex h-40 items-center justify-center overflow-hidden bg-gradient-to-br from-[#2a2412] to-background">
@@ -44,9 +42,7 @@ export function GamesView() {
                 {user && (
                   <p className="mt-4 text-sm">
                     <span className="text-muted-foreground">{t.games.yourBest}: </span>
-                    <span className="font-heading text-primary">
-                      {best ? `${formatDuration(best.time_seconds)} · ${best.moves} ${t.games.moves.toLowerCase()}` : t.profile.notPlayed}
-                    </span>
+                    <span className="font-heading text-primary">{mine.data ? summary(mine.data[id]) : t.common.loading}</span>
                   </p>
                 )}
                 <div className="mt-5 flex-1 rounded-xl bg-background/60 p-3">

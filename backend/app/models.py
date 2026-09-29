@@ -105,6 +105,19 @@ class GameScore(Base):
     user: Mapped[User] = relationship()
 
 
+class GameAttempt(Base):
+    # Одиграна игра што НЕ е добиена (изгубена или прекината), за да се знае дека корисникот играл
+    __tablename__ = "game_attempts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    game: Mapped[str] = mapped_column(String(30), index=True)
+    result: Mapped[str] = mapped_column(String(10))  # lost / quit
+    time_seconds: Mapped[int] = mapped_column(Integer)
+    moves: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 class BlogPost(Base):
     __tablename__ = "blog_posts"
 

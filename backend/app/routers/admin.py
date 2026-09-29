@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from ..auth import require_admin
 from ..db import get_db
-from ..models import Booking, ContactMessage, GameScore, LeaderboardEntry, Room, User
+from ..models import Booking, ContactMessage, GameAttempt, GameScore, LeaderboardEntry, Room, User
 from ..pricing import local_now
 from ..schemas import BookingStatusIn, LeaderboardIn, RoomIn
 from ..serializers import booking_out, leaderboard_out, room_out, user_out
@@ -26,7 +26,8 @@ def stats(db: Session = Depends(get_db)):
             select(func.coalesce(func.sum(Booking.price), 0)).where(Booking.status == "completed")
         ),
         "unread_messages": db.scalar(select(func.count(ContactMessage.id)).where(ContactMessage.is_read.is_(False))),
-        "game_plays": db.scalar(select(func.count(GameScore.id))),
+        # Добиени + изгубени/прекинати игри
+        "game_plays": db.scalar(select(func.count(GameScore.id))) + db.scalar(select(func.count(GameAttempt.id))),
     }
 
 
