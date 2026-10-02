@@ -3,7 +3,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
+import { API_URL } from "./api-url";
+
+export { API_URL }; // за постојните import-и од "@/lib/api"
+
 const TOKEN_KEY = "enigma_token";
 
 export class ApiError extends Error {
@@ -81,4 +84,10 @@ export function useApi<T>(path: string | null) {
   const loading = path !== null && (!samePath || result.version !== version);
   const reload = useCallback(() => setVersion((v) => v + 1), []);
   return { data: samePath ? result.data : null, error: samePath ? result.error : null, loading, reload };
+}
+
+// Исто како useApi, но ако серверот веќе ги донел податоците (initial), не се прави ново барање
+export function useApiInitial<T>(path: string, initial: T | null) {
+  const fetched = useApi<T>(initial ? null : path);
+  return initial ? { ...fetched, data: initial, loading: false } : fetched;
 }

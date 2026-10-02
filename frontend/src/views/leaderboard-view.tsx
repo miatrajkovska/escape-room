@@ -6,12 +6,13 @@ import { ErrorState, LeaderboardTable, LoadingNote, PageHeader } from "@/compone
 import { GameLeaderboard } from "@/components/games/game-leaderboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLang } from "@/i18n/provider";
-import { useApi } from "@/lib/api";
+import { useApi, useApiInitial } from "@/lib/api";
 import { pick } from "@/lib/format";
 import type { GameId, LeaderboardRow, Room } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function LeaderboardView() {
+// initialRooms: собите што ги донел серверот (null ако backend-от не одговорил)
+export function LeaderboardView({ initialRooms }: { initialRooms: Room[] | null }) {
   const { t } = useLang();
   return (
     <>
@@ -27,7 +28,7 @@ export function LeaderboardView() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="rooms">
-            <RoomsBoard />
+            <RoomsBoard initialRooms={initialRooms} />
           </TabsContent>
           <TabsContent value="games">
             <GamesBoard />
@@ -38,9 +39,9 @@ export function LeaderboardView() {
   );
 }
 
-function RoomsBoard() {
+function RoomsBoard({ initialRooms }: { initialRooms: Room[] | null }) {
   const { lang } = useLang();
-  const rooms = useApi<Room[]>("/api/rooms");
+  const rooms = useApiInitial<Room[]>("/api/rooms", initialRooms);
   const board = useApi<Record<string, LeaderboardRow[]>>("/api/leaderboard?limit=10");
   const [active, setActive] = useState<string | null>(null);
 

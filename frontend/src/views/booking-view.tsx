@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -14,19 +13,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { CalendarIcon, CheckCircleIcon, themeIcon } from "@/components/icons";
 import { Difficulty, ErrorState, LoadingNote, PageHeader } from "@/components/shared";
 import { useLang } from "@/i18n/provider";
-import { ApiError, api, useApi } from "@/lib/api";
+import { ApiError, api, useApi, useApiInitial } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatDate, formatPrice, pick, toIsoDate } from "@/lib/format";
 import type { Booking, CalendarDay, Pricing, Room, Slot } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function BookingView() {
+// initialRooms: собите што ги донел серверот (null ако backend-от не одговорил)
+export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
   const { t, lang } = useLang();
   const { user } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
 
-  const rooms = useApi<Room[]>("/api/rooms");
+  const rooms = useApiInitial<Room[]>("/api/rooms", initialRooms);
   const pricing = useApi<Pricing>("/api/pricing");
 
   const [roomSlug, setRoomSlug] = useState<string | null>(params.get("room"));
@@ -74,16 +74,19 @@ export function BookingView() {
 
   async function submit() {
     if (!canSubmit) return;
-    if (!user) {
-      router.push(`/login?next=${encodeURIComponent(`/booking?room=${roomSlug}`)}`);
-      return;
-    }
     setSubmitting(true);
     try {
       const booking = await api<Booking>("/api/bookings", {
         method: "POST",
         body: { room_slug: roomSlug, date: toIsoDate(date), time, players, customer_name: name, phone, notes },
       });
+      // Најавен корисник оди на профилот, во „Мои резервации“
+      if (user) {
+        toast.success(`${t.booking.bookedToast} ${booking.code}`);
+        router.push("/profile#bookings");
+        return;
+      }
+      // Гостинот нема профил, па му го покажуваме кодот тука
       setConfirmed(booking);
       slots.reload();
       calendar.reload();
@@ -285,9 +288,9 @@ export function BookingView() {
             </div>
             <p className="mt-2 text-xs text-muted-foreground">{t.booking.payOnSite}</p>
             <Button size="xl" className="mt-5 w-full" disabled={!canSubmit || submitting} onClick={submit}>
-              {user ? t.booking.confirm : t.booking.loginToBook}
+              {t.booking.confirm}
             </Button>
-            {!user && <p className="mt-2 text-center text-xs text-muted-foreground">{t.booking.loginRequired}</p>}
+            {!user && <p className="mt-2 text-center text-xs text-muted-foreground">{t.booking.guestNote}</p>}
           </div>
         </aside>
       </section>
@@ -330,9 +333,6 @@ export function BookingView() {
             </div>
           )}
           <DialogFooter className="gap-2 sm:justify-center">
-            <Link href="/profile" className={buttonVariants({ variant: "outline", size: "lg" })}>
-              {t.booking.myBookings}
-            </Link>
             <Button size="lg" onClick={reset}>
               {t.booking.another}
             </Button>

@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 
-from ..auth import get_current_user
+from ..auth import get_current_user, get_optional_user
 from ..db import get_db
 from ..models import Booking, User
 from ..pricing import BOOKING_WINDOW_DAYS, SLOT_TIMES, calc_price, is_slot_in_past, local_now
@@ -25,7 +25,8 @@ def new_code() -> str:
 
 
 @router.post("")
-def create_booking(data: BookingIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def create_booking(data: BookingIn, user: User | None = Depends(get_optional_user), db: Session = Depends(get_db)):
+    # Може и без профил (гостин): тогаш user е None и резервацијата не е врзана за корисник
     room = get_room_or_404(db, data.room_slug)
 
     if data.time not in SLOT_TIMES:
@@ -42,14 +43,14 @@ def create_booking(data: BookingIn, user: User = Depends(get_current_user), db: 
     booking = Booking(
         code=new_code(),
         room_id=room.id,
-        user_id=user.id,
+        user_id=user.id if user else None,
         date=data.date,
         time=data.time,
         players=data.players,
         price=calc_price(data.players, data.date),
         customer_name=data.customer_name.strip(),
         phone=data.phone.strip(),
-        email=user.email,
+        email=user.email if user else "",
         notes=data.notes.strip(),
     )
     db.add(booking)

@@ -61,10 +61,14 @@ def my_stats(user: User = Depends(get_current_user), db: Session = Depends(get_d
         ).first()
         won = db.scalar(select(func.count(GameScore.id)).where(GameScore.user_id == user.id, GameScore.game == game))
         other = db.scalar(select(func.count(GameAttempt.id)).where(GameAttempt.user_id == user.id, GameAttempt.game == game))
+        # Место на ранг-листата за таа игра (None ако нема победа)
+        board = leaderboard(game, limit=1000, db=db) if s else []
+        rank = next((row["rank"] for row in board if row["user_id"] == user.id), None)
         result[game] = {
             "best": {"time_seconds": s.time_seconds, "moves": s.moves} if s else None,
             "won": won,
             "played": won + other,
+            "rank": rank,
         }
     return result
 

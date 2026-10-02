@@ -27,17 +27,33 @@ def best_times(db: Session) -> dict[int, int]:
     return {room_id: t for room_id, t in rows}
 
 
+# Собите ретко се менуваат, па листата ја чуваме во меморија.
+# Така /api/rooms не оди до базата (која е далеку) при секое барање.
+_rooms_cache: list[dict] | None = None
+
+
+def clear_rooms_cache():
+    # Се повикува кога админ ќе смени соба или рекорд
+    global _rooms_cache
+    _rooms_cache = None
+
+
 @router.get("/rooms")
 def list_rooms(db: Session = Depends(get_db)):
-    rooms = db.scalars(select(Room).order_by(Room.sort_order)).all()
-    best = best_times(db)
-    return [room_out(r, best.get(r.id)) for r in rooms]
+    global _rooms_cache
+    if _rooms_cache is None:
+        rooms = db.scalars(select(Room).order_by(Room.sort_order)).all()
+        best = best_times(db)
+        _rooms_cache = [room_out(r, best.get(r.id)) for r in rooms]
+    return _rooms_cache
 
 
 @router.get("/rooms/{slug}")
 def get_room(slug: str, db: Session = Depends(get_db)):
-    room = get_room_or_404(db, slug)
-    return room_out(room, best_times(db).get(room.id))
+    room = next((r for r in list_rooms(db) if r["slug"] == slug), None)
+    if not room:
+        raise HTTPException(404, "Room not found")
+    return room
 
 
 def taken_times(db: Session, room_id: int, day: date) -> set[str]:

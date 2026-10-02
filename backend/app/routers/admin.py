@@ -9,7 +9,7 @@ from ..models import Booking, ContactMessage, GameAttempt, GameScore, Leaderboar
 from ..pricing import local_now
 from ..schemas import BookingStatusIn, LeaderboardIn, RoomIn
 from ..serializers import booking_out, leaderboard_out, room_out, user_out
-from .rooms import get_room_or_404
+from .rooms import clear_rooms_cache, get_room_or_404
 
 router = APIRouter(prefix="/api/admin", tags=["admin"], dependencies=[Depends(require_admin)])
 
@@ -104,6 +104,7 @@ def add_leaderboard(data: LeaderboardIn, db: Session = Depends(get_db)):
     )
     db.add(entry)
     db.commit()
+    clear_rooms_cache()  # најдоброто време на собата можеби се сменило
     entry.room = room
     return leaderboard_out(entry, 0)
 
@@ -115,6 +116,7 @@ def delete_leaderboard(entry_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404, "Entry not found")
     db.delete(entry)
     db.commit()
+    clear_rooms_cache()
     return {"ok": True}
 
 
@@ -151,6 +153,7 @@ def add_room(data: RoomIn, db: Session = Depends(get_db)):
     )
     db.add(room)
     db.commit()
+    clear_rooms_cache()
     return room_out(room)
 
 
@@ -160,4 +163,5 @@ def delete_room(slug: str, db: Session = Depends(get_db)):
     room = get_room_or_404(db, slug)
     db.delete(room)
     db.commit()
+    clear_rooms_cache()
     return {"ok": True}

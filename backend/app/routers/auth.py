@@ -1,11 +1,12 @@
 # /api/auth – регистрација, најава, мој профил
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from ..auth import create_token, get_current_user, hash_password, verify_password
 from ..db import get_db
-from ..models import User
+from ..models import Booking, GameAttempt, GameScore, User
+from ..pricing import local_now
 from ..schemas import LoginIn, RegisterIn
 from ..serializers import user_out
 
@@ -35,3 +36,21 @@ def login(data: LoginIn, db: Session = Depends(get_db)):
 @router.get("/me")
 def me(user: User = Depends(get_current_user)):
     return user_out(user)
+
+
+@router.delete("/me")
+def delete_me(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # Бришење на профилот: резултатите од сите игри се бришат (исчезнуваат од ранг-листите)
+    db.execute(delete(GameScore).where(GameScore.user_id == user.id))
+    db.execute(delete(GameAttempt).where(GameAttempt.user_id == user.id))
+    # Идните резервации се откажуваат за да се ослободат термините
+    db.execute(
+        update(Booking)
+        .where(Booking.user_id == user.id, Booking.status == "confirmed", Booking.date >= local_now().date())
+        .values(status="cancelled")
+    )
+    # Минатите резервации остануваат кај админот, но без врска со профилот
+    db.execute(update(Booking).where(Booking.user_id == user.id).values(user_id=None))
+    db.delete(user)
+    db.commit()
+    return {"ok": True}

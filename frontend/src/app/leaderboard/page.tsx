@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { getRooms } from "@/lib/server-data";
 import { LeaderboardView } from "@/views/leaderboard-view";
 
 export const metadata: Metadata = { title: "Рекорди" };
 
-export default function Page() {
-  return <LeaderboardView />;
+export default async function Page() {
+  return <LeaderboardView initialRooms={await getRooms()} />;
 }

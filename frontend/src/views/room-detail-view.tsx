@@ -6,14 +6,18 @@ import { RoomArt } from "@/components/room-art";
 import { CtaLink, Difficulty, ErrorState, LeaderboardTable, LoadingNote, RoomCard } from "@/components/shared";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLang } from "@/i18n/provider";
-import { useApi } from "@/lib/api";
+import { useApi, useApiInitial } from "@/lib/api";
 import { formatDuration, formatPrice, pick } from "@/lib/format";
 import type { LeaderboardRow, Room } from "@/lib/types";
 
-export function RoomDetailView({ slug }: { slug: string }) {
+// initialRooms: собите што ги донел серверот (null ако backend-от не одговорил)
+export function RoomDetailView({ slug, initialRooms }: { slug: string; initialRooms: Room[] | null }) {
   const { t, lang } = useLang();
-  const room = useApi<Room>(`/api/rooms/${slug}`);
-  const rooms = useApi<Room[]>("/api/rooms");
+  const rooms = useApiInitial<Room[]>("/api/rooms", initialRooms);
+  // Ако серверот ги донел собите, собата ја наоѓаме во листата; инаку ја бараме посебно
+  const fetched = useApi<Room>(initialRooms ? null : `/api/rooms/${slug}`);
+  const found = initialRooms?.find((r) => r.slug === slug) ?? null;
+  const room = initialRooms ? { data: found, error: found ? null : "Room not found", reload: fetched.reload } : fetched;
   const board = useApi<LeaderboardRow[]>(`/api/leaderboard/${slug}?limit=10`);
 
   if (room.error) {

@@ -70,7 +70,10 @@ export type LeaderboardRow = {
 export type GameId = "codebreaker" | "memory" | "cipher";
 
 // Мои резултати по игра: најдобро време, број на победи и вкупно одиграни
-export type MyGameStats = Record<GameId, { best: { time_seconds: number; moves: number } | null; won: number; played: number }>;
+export type MyGameStats = Record<
+  GameId,
+  { best: { time_seconds: number; moves: number } | null; won: number; played: number; rank: number | null }
+>;
 
 export type GameRow = {
   rank: number;

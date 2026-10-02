@@ -65,24 +65,77 @@ export function ProfileView() {
             <p className="text-xl">{user.name}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
-          {/* Прво одиме на почетната, па се одјавуваме – инаку профилот би не пренасочил на најава */}
-          <Button
-            variant="outline"
-            size="lg"
-            className="ml-auto"
-            onClick={() => {
-              router.replace("/");
-              logout();
-            }}
-          >
-            <DoorIcon /> {t.profile.logout}
-          </Button>
+          <div className="ml-auto flex items-center gap-2">
+            {/* Прво одиме на почетната, па се одјавуваме – инаку профилот би не пренасочил на најава */}
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => {
+                router.replace("/");
+                logout();
+              }}
+            >
+              <DoorIcon /> {t.profile.logout}
+            </Button>
+            <DeleteProfile />
+          </div>
         </div>
       </PageHeader>
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_340px]">
         <MyBookings />
         <MyGames />
       </section>
+    </>
+  );
+}
+
+// Бришење на профилот, со дијалог за потврда
+function DeleteProfile() {
+  const { t } = useLang();
+  const { logout } = useAuth();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  async function remove() {
+    setDeleting(true);
+    try {
+      await api("/api/auth/me", { method: "DELETE" });
+      toast.success(t.profile.deleted);
+      // Исто како кај одјавата: прво на почетната, па одјава
+      router.replace("/");
+      logout();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t.common.error);
+      setDeleting(false);
+      setOpen(false);
+    }
+  }
+
+  return (
+    <>
+      {/* Дискретно копче до „Одјави се“; предупредувањето е во дијалогот */}
+      <Button variant="ghost" size="lg" className="text-muted-foreground hover:text-destructive" onClick={() => setOpen(true)}>
+        {t.profile.deleteProfile}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.profile.deleteProfile}</DialogTitle>
+            <DialogDescription>
+              {t.profile.deleteConfirm} {t.profile.deleteText}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              {t.common.back}
+            </Button>
+            <Button variant="destructive" disabled={deleting} onClick={remove}>
+              {t.profile.deleteProfile}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
@@ -110,7 +163,8 @@ function MyBookings() {
   }
 
   return (
-    <div>
+    // id="bookings" за линкот /profile#bookings по нова резервација
+    <div id="bookings" className="scroll-mt-24">
       <h2 className="mb-4 text-2xl uppercase">{t.profile.bookings}</h2>
       {bookings.error && <ErrorState onRetry={bookings.reload} />}
       {!bookings.data && !bookings.error && <LoadingNote />}
@@ -194,6 +248,17 @@ function BookingRow({ booking: b, onCancel }: { booking: Booking; onCancel?: () 
   );
 }
 
+const MEDALS = ["🥇", "🥈", "🥉"];
+
+function medal(rank: number | null, placeLabel: string) {
+  if (!rank || rank > 3) return null;
+  return (
+    <span className="ml-2" role="img" aria-label={`${rank}. ${placeLabel}`} title={`${rank}. ${placeLabel}`}>
+      {MEDALS[rank - 1]}
+    </span>
+  );
+}
+
 function MyGames() {
   const { t } = useLang();
   const mine = useApi<MyGameStats>("/api/games/me");
@@ -212,7 +277,11 @@ function MyGames() {
             <Link key={id} href={`/games/${id}`} className="card-hover flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
               <Icon className="size-8 text-primary" />
               <div className="flex-1">
-                <p className="font-heading uppercase">{t.games.list[id].name}</p>
+                <p className="font-heading uppercase">
+                  {t.games.list[id].name}
+                  {/* Медал ако корисникот е меѓу првите 3 на ранг-листата */}
+                  {mine.data && medal(mine.data[id].rank, t.profile.place)}
+                </p>
                 <p className="text-sm text-muted-foreground">
                   {mine.data ? summary(mine.data[id]) : t.common.loading}
                 </p>

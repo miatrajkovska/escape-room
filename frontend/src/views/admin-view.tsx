@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLang } from "@/i18n/provider";
+import { refreshRooms } from "@/app/actions";
 import { api, useApi } from "@/lib/api";
 import { formatDate, formatDuration, formatPrice, pick, toIsoDate } from "@/lib/format";
 import type { AdminRoom, AdminStats, Booking, ContactMessage, LeaderboardRow, Room, User } from "@/lib/types";
@@ -194,6 +195,7 @@ function RoomsTab() {
       toast.success(t.admin.roomAdded);
       setForm(emptyRoom);
       rooms.reload();
+      await refreshRooms();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t.common.error);
     }
@@ -205,6 +207,7 @@ function RoomsTab() {
       await api(`/api/admin/rooms/${slug}`, { method: "DELETE" });
       toast.success(t.admin.roomDeleted);
       rooms.reload();
+      await refreshRooms();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t.common.error);
     }
@@ -376,6 +379,7 @@ function LeaderboardTab() {
       toast.success(t.admin.added);
       setForm({ ...form, team_name: "" });
       board.reload();
+      await refreshRooms(); // најдоброто време на собата можеби се сменило
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t.common.error);
     }
@@ -384,6 +388,7 @@ function LeaderboardTab() {
   async function remove(id: number) {
     await api(`/api/admin/leaderboard/${id}`, { method: "DELETE" });
     board.reload();
+    await refreshRooms();
   }
 
   const input = (key: keyof typeof form, label: string, type = "number", extra: React.ComponentProps<typeof Input> = {}) => (

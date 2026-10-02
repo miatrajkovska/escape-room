@@ -21,13 +21,14 @@ import {
 import { RoomArt } from "@/components/room-art";
 import { CtaLink, ErrorState, RoomCard, RoomCardSkeleton, SectionTitle } from "@/components/shared";
 import { useLang } from "@/i18n/provider";
-import { useApi } from "@/lib/api";
+import { useApi, useApiInitial } from "@/lib/api";
 import { formatDate, formatDuration, pick } from "@/lib/format";
 import type { LeaderboardRow, Post, Room } from "@/lib/types";
 
-export function HomeView() {
+// initialRooms: собите што ги донел серверот (null ако backend-от не одговорил)
+export function HomeView({ initialRooms }: { initialRooms: Room[] | null }) {
   const { t } = useLang();
-  const rooms = useApi<Room[]>("/api/rooms");
+  const rooms = useApiInitial<Room[]>("/api/rooms", initialRooms);
 
   return (
     <>

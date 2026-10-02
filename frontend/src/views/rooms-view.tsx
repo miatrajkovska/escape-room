@@ -4,13 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ErrorState, PageHeader, RoomCard, RoomCardSkeleton } from "@/components/shared";
 import { useLang } from "@/i18n/provider";
-import { useApi } from "@/lib/api";
+import { useApiInitial } from "@/lib/api";
 import type { Room } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function RoomsView() {
+// initialRooms: собите што ги донел серверот (null ако backend-от не одговорил)
+export function RoomsView({ initialRooms }: { initialRooms: Room[] | null }) {
   const { t } = useLang();
-  const { data, error, reload } = useApi<Room[]>("/api/rooms");
+  const { data, error, reload } = useApiInitial<Room[]>("/api/rooms", initialRooms);
   const [difficulty, setDifficulty] = useState<number | null>(null);
   const [players, setPlayers] = useState<number | null>(null);
 
