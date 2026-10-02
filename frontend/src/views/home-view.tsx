@@ -98,9 +98,6 @@ function Hero() {
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.2fr_1fr]">
         <div>
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-primary">
-            <KeyIcon className="size-3.5" /> {t.home.eyebrow}
-          </p>
           <h1 className="text-5xl uppercase leading-[1.05] sm:text-7xl">
             {t.home.title1}
             <br />
@@ -119,6 +116,10 @@ function Hero() {
         <div className="flex flex-col items-center">
           <CountdownTimer />
           <p className="mt-4 text-xs uppercase tracking-[0.3em] text-muted-foreground">{t.home.timerLabel}</p>
+          {/* Слоганот на фирмата, под тајмерот */}
+          <p className="mt-5 flex items-center gap-2.5 font-heading text-lg uppercase tracking-[0.15em] text-primary sm:text-xl">
+            <KeyIcon className="size-5" /> {t.home.tagline}
+          </p>
         </div>
       </div>
     </section>

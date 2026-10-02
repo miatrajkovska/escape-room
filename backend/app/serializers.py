@@ -1,5 +1,6 @@
 # Претворање на објекти од базата во JSON речници
 from .models import BlogPost, Booking, LeaderboardEntry, Room, User
+from .pricing import can_cancel
 
 
 def user_out(u: User) -> dict:
@@ -46,6 +47,8 @@ def booking_out(b: Booking) -> dict:
         "email": b.email,
         "notes": b.notes,
         "status": b.status,
+        # Дали корисникот може сам да ја откаже (до 24 часа пред терминот)
+        "can_cancel": b.status == "confirmed" and can_cancel(b.date, b.time),
         "created_at": b.created_at.isoformat(),
     }
 

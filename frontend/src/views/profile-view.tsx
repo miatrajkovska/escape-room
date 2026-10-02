@@ -261,7 +261,7 @@ function MyBookings() {
                   </div>
                 )}
                 {list.map((b) => (
-                  <BookingRow key={b.id} booking={b} onCancel={tab === "upcoming" && b.status === "confirmed" ? () => setToCancel(b) : undefined} />
+                  <BookingRow key={b.id} booking={b} onCancel={b.can_cancel ? () => setToCancel(b) : undefined} />
                 ))}
               </TabsContent>
             );
@@ -312,6 +312,10 @@ function BookingRow({ booking: b, onCancel }: { booking: Booking; onCancel?: () 
           <Button variant="destructive" size="sm" onClick={onCancel}>
             {t.profile.cancelBooking}
           </Button>
+        )}
+        {/* Потврдена, но помалку од 24 ч. до терминот */}
+        {b.status === "confirmed" && !b.can_cancel && b.date >= toIsoDate(new Date()) && (
+          <span className="text-xs text-muted-foreground">{t.profile.cancelByPhone}</span>
         )}
       </div>
     </div>

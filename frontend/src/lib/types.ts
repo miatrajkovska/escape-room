@@ -53,6 +53,7 @@ export type Booking = {
   email: string;
   notes: string;
   status: "confirmed" | "completed" | "cancelled";
+  can_cancel: boolean; // до 24 ч. пред терминот
   created_at: string;
 };
 

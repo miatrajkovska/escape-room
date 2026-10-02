@@ -10,8 +10,17 @@ from sqlalchemy.orm import Session, joinedload
 from ..auth import get_current_user, get_optional_user
 from ..db import get_db
 from ..models import Booking, User
-from ..pricing import BOOKING_WINDOW_DAYS, SLOT_TIMES, calc_price, is_slot_in_past, local_now
-from ..schemas import BookingIn
+from ..pricing import (
+    BOOKING_WINDOW_DAYS,
+    MAX_ACTIVE_PER_PHONE,
+    SLOT_TIMES,
+    calc_price,
+    can_cancel,
+    digits,
+    is_slot_in_past,
+    local_now,
+)
+from ..schemas import BookingIn, CancelByCodeIn
 from ..serializers import booking_out
 from .rooms import get_room_or_404, taken_times
 
@@ -29,6 +38,8 @@ def create_booking(data: BookingIn, user: User | None = Depends(get_optional_use
     # Може и без профил (гостин): тогаш user е None и резервацијата не е врзана за корисник
     room = get_room_or_404(db, data.room_slug)
 
+    if data.website:
+        raise HTTPException(400, "Invalid request")
     if data.time not in SLOT_TIMES:
         raise HTTPException(400, "Invalid time slot")
     if is_slot_in_past(data.date, data.time):
@@ -39,6 +50,12 @@ def create_booking(data: BookingIn, user: User | None = Depends(get_optional_use
         raise HTTPException(400, f"This room is for {room.min_players}-{room.max_players} players")
     if data.time in taken_times(db, room.id, data.date):
         raise HTTPException(409, "This time slot is already booked")
+    # Ист телефон не може да има премногу претстојни резервации
+    upcoming_phones = db.scalars(
+        select(Booking.phone).where(Booking.status == "confirmed", Booking.date >= local_now().date())
+    ).all()
+    if sum(digits(p) == digits(data.phone) for p in upcoming_phones) >= MAX_ACTIVE_PER_PHONE:
+        raise HTTPException(429, "Too many active bookings for this phone number")
 
     booking = Booking(
         code=new_code(),
@@ -80,7 +97,23 @@ def cancel_booking(booking_id: int, user: User = Depends(get_current_user), db: 
     booking = db.get(Booking, booking_id, options=[joinedload(Booking.room)])
     if not booking or booking.user_id != user.id:
         raise HTTPException(404, "Booking not found")
-    if booking.status != "confirmed" or is_slot_in_past(booking.date, booking.time):
+    return cancel(booking, db)
+
+
+@router.post("/cancel-by-code")
+def cancel_by_code(data: CancelByCodeIn, db: Session = Depends(get_db)):
+    # За гости: резервацијата се наоѓа по код, а телефонот мора да се совпаѓа
+    booking = db.scalar(
+        select(Booking).options(joinedload(Booking.room)).where(Booking.code == data.code.strip().upper())
+    )
+    if not booking or digits(booking.phone) != digits(data.phone):
+        raise HTTPException(404, "Booking not found")
+    return cancel(booking, db)
+
+
+def cancel(booking: Booking, db: Session) -> dict:
+    # Бесплатно откажување само до 24 часа пред терминот
+    if booking.status != "confirmed" or not can_cancel(booking.date, booking.time):
         raise HTTPException(400, "This booking can no longer be cancelled")
     booking.status = "cancelled"
     db.commit()

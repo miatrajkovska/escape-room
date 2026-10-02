@@ -33,6 +33,14 @@ class BookingIn(BaseModel):
     # Се чува за потврда по е-пошта (праќањето може да се додаде подоцна)
     email: EmailStr
     notes: str = Field(default="", max_length=1000)
+    # Скриено поле (honeypot): луѓето не го гледаат, па ако е пополнето, го пополнил бот
+    website: str = Field(default="", max_length=200)
+
+
+class CancelByCodeIn(BaseModel):
+    # Откажување без профил: код + телефонот од резервацијата
+    code: str = Field(min_length=4, max_length=12)
+    phone: str = Field(min_length=6, max_length=40)
 
 
 class GameScoreIn(BaseModel):

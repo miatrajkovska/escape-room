@@ -40,6 +40,7 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
   // Гостин што сака и да направи профил при резервацијата
   const [withAccount, setWithAccount] = useState(false);
   const [password, setPassword] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot – луѓето не го гледаат
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState<Booking | null>(null);
@@ -100,7 +101,7 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
       }
       const booking = await api<Booking>("/api/bookings", {
         method: "POST",
-        body: { room_slug: roomSlug, date: toIsoDate(date), time, players, customer_name: name, phone, email: email.trim(), notes },
+        body: { room_slug: roomSlug, date: toIsoDate(date), time, players, customer_name: name, phone, email: email.trim(), notes, website },
       });
       // Pop-up со кодот; најавените имаат и копче до „Мои резервации“
       setConfirmed(booking);
@@ -112,6 +113,8 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
         setTime(null);
         slots.reload();
         calendar.reload();
+      } else if (e instanceof ApiError && e.status === 429) {
+        toast.error(t.booking.tooMany);
       } else {
         toast.error(e instanceof Error ? e.message : t.common.error);
       }
@@ -286,6 +289,17 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
                   </Label>
                   <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
                 </div>
+                {/* Скриено поле за ботови (honeypot) – не се гледа и не се пополнува од луѓе */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
               </div>
             </Step>
           </div>
@@ -382,6 +396,7 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
               </div>
             </div>
           )}
+          <p className="text-center text-xs text-muted-foreground">{t.booking.cancelHint}</p>
           <DialogFooter className="gap-2 sm:justify-center">
             {user && (
               <Button variant="outline" size="lg" onClick={() => router.push("/profile#bookings")}>
@@ -392,6 +407,75 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
               {t.booking.another}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Откажување без профил */}
+      <section className="mx-auto max-w-7xl px-4 pb-12 text-center sm:px-6">
+        <GuestCancel />
+      </section>
+    </>
+  );
+}
+
+// Гостин ја откажува резервацијата со код и телефон
+function GuestCancel() {
+  const { t } = useLang();
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [phone, setPhone] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await api("/api/bookings/cancel-by-code", { method: "POST", body: { code, phone } });
+      toast.success(t.booking.cancelDone);
+      setOpen(false);
+      setCode("");
+      setPhone("");
+    } catch (err) {
+      const status = err instanceof ApiError ? err.status : 0;
+      toast.error(status === 404 ? t.booking.notFound : status === 400 ? t.booking.tooLate : t.common.error);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <>
+      <Button variant="link" onClick={() => setOpen(true)}>
+        {t.booking.guestCancelLink}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.booking.guestCancelTitle}</DialogTitle>
+            <DialogDescription>{t.booking.guestCancelText}</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={submit} className="space-y-4">
+            <div>
+              <Label htmlFor="cancel-code" className="mb-2 block">
+                {t.booking.code}
+              </Label>
+              <Input id="cancel-code" placeholder="PE-XXXXX" value={code} onChange={(e) => setCode(e.target.value)} className="h-10 uppercase" />
+            </div>
+            <div>
+              <Label htmlFor="cancel-phone" className="mb-2 block">
+                {t.common.phone}
+              </Label>
+              <Input id="cancel-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="h-10" />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                {t.common.back}
+              </Button>
+              <Button type="submit" variant="destructive" disabled={busy || code.trim().length < 4 || phone.trim().length < 6}>
+                {t.profile.cancelBooking}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>
