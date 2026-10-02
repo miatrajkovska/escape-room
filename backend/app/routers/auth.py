@@ -7,7 +7,7 @@ from ..auth import create_token, get_current_user, hash_password, verify_passwor
 from ..db import get_db
 from ..models import Booking, GameAttempt, GameScore, User
 from ..pricing import local_now
-from ..schemas import LoginIn, RegisterIn
+from ..schemas import LoginIn, ProfileIn, RegisterIn
 from ..serializers import user_out
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
@@ -19,7 +19,7 @@ def register(data: RegisterIn, db: Session = Depends(get_db)):
     exists = db.scalar(select(User).where(func.lower(User.email) == email))
     if exists:
         raise HTTPException(409, "Email already registered")
-    user = User(name=data.name.strip(), email=email, password_hash=hash_password(data.password))
+    user = User(name=data.name.strip(), email=email, phone=data.phone.strip(), password_hash=hash_password(data.password))
     db.add(user)
     db.commit()
     return {"token": create_token(user), "user": user_out(user)}
@@ -35,6 +35,20 @@ def login(data: LoginIn, db: Session = Depends(get_db)):
 
 @router.get("/me")
 def me(user: User = Depends(get_current_user)):
+    return user_out(user)
+
+
+@router.patch("/me")
+def update_me(data: ProfileIn, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # Уредување на име, е-пошта и телефон
+    email = data.email.lower()
+    taken = db.scalar(select(User).where(func.lower(User.email) == email, User.id != user.id))
+    if taken:
+        raise HTTPException(409, "Email already registered")
+    user.name = data.name.strip()
+    user.email = email
+    user.phone = data.phone.strip()
+    db.commit()
     return user_out(user)
 
 

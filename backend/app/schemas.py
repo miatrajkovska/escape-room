@@ -8,6 +8,14 @@ class RegisterIn(BaseModel):
     name: str = Field(min_length=2, max_length=80)
     email: EmailStr
     password: str = Field(min_length=6, max_length=100)
+    phone: str = Field(default="", max_length=40)
+
+
+class ProfileIn(BaseModel):
+    # Уредување на профилот
+    name: str = Field(min_length=2, max_length=80)
+    email: EmailStr
+    phone: str = Field(default="", max_length=40)
 
 
 class LoginIn(BaseModel):
@@ -22,6 +30,8 @@ class BookingIn(BaseModel):
     players: int = Field(ge=2, le=6)
     customer_name: str = Field(min_length=2, max_length=100)
     phone: str = Field(min_length=6, max_length=40)
+    # Се чува за потврда по е-пошта (праќањето може да се додаде подоцна)
+    email: EmailStr
     notes: str = Field(default="", max_length=1000)
 
 

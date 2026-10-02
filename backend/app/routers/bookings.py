@@ -50,7 +50,7 @@ def create_booking(data: BookingIn, user: User | None = Depends(get_optional_use
         price=calc_price(data.players, data.date),
         customer_name=data.customer_name.strip(),
         phone=data.phone.strip(),
-        email=user.email if user else "",
+        email=data.email.lower(),
         notes=data.notes.strip(),
     )
     db.add(booking)

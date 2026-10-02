@@ -11,7 +11,8 @@ type AuthContextValue = {
   user: User | null;
   ready: boolean; // true откако ќе провериме дали има зачуван токен
   login: (email: string, password: string) => Promise<User>;
-  register: (name: string, email: string, password: string) => Promise<User>;
+  register: (name: string, email: string, password: string, phone?: string) => Promise<User>;
+  updateUser: (user: User) => void;
   logout: () => void;
 };
 
@@ -43,8 +44,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return res.user;
   }, []);
 
-  const register = useCallback(async (name: string, email: string, password: string) => {
-    const res = await api<AuthResponse>("/api/auth/register", { method: "POST", body: { name, email, password } });
+  const register = useCallback(async (name: string, email: string, password: string, phone = "") => {
+    const res = await api<AuthResponse>("/api/auth/register", { method: "POST", body: { name, email, password, phone } });
     setToken(res.token);
     setUser(res.user);
     return res.user;
@@ -55,7 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }, []);
 
-  return <AuthContext.Provider value={{ user, ready, login, register, logout }}>{children}</AuthContext.Provider>;
+  // По уредување на профилот: новите податоци веднаш се гледаат насекаде
+  const updateUser = useCallback((u: User) => setUser(u), []);
+
+  return <AuthContext.Provider value={{ user, ready, login, register, logout, updateUser }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

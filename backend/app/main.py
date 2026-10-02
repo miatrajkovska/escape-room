@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from .config import CORS_ORIGINS
 from .db import Base, engine
@@ -14,6 +15,9 @@ from .seed import seed_if_empty
 async def lifespan(app: FastAPI):
     # При старт: креирај ги табелите и додај демо податоци ако базата е празна
     Base.metadata.create_all(engine)
+    # create_all не додава колони во постоечка табела, па новата колона ја додаваме рачно
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(40) NOT NULL DEFAULT ''"))
     seed_if_empty()
     yield
 

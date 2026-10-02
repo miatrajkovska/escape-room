@@ -2,7 +2,7 @@
 
 export type Lang = "mk" | "en";
 
-export type User = { id: number; name: string; email: string; is_admin: boolean };
+export type User = { id: number; name: string; email: string; phone: string; is_admin: boolean };
 
 export type Room = {
   id: number;

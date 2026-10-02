@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 // initialRooms: собите што ги донел серверот (null ако backend-от не одговорил)
 export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
   const { t, lang } = useLang();
-  const { user } = useAuth();
+  const { user, register } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
 
@@ -33,8 +33,13 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string | null>(null);
   const [players, setPlayers] = useState<number | null>(null);
+  // null = корисникот уште не го менувал полето, па се зема од профилот
   const [nameInput, setName] = useState<string | null>(null);
-  const [phone, setPhone] = useState("");
+  const [phoneInput, setPhone] = useState<string | null>(null);
+  const [emailInput, setEmail] = useState<string | null>(null);
+  // Гостин што сака и да направи профил при резервацијата
+  const [withAccount, setWithAccount] = useState(false);
+  const [password, setPassword] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState<Booking | null>(null);
@@ -53,7 +58,10 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
   const slots = useApi<{ slots: Slot[] }>(roomSlug && date ? `/api/rooms/${roomSlug}/availability?date=${toIsoDate(date)}` : null);
 
   // Името од профилот е почетна вредност додека корисникот не го смени
+  // Најавениот корисник ги има податоците пополнети од профилот
   const name = nameInput ?? user?.name ?? "";
+  const phone = phoneInput ?? user?.phone ?? "";
+  const email = emailInput ?? user?.email ?? "";
 
   // При промена на соба: исчисти термин и број на играчи ако не одговара
   function chooseRoom(r: Room) {
@@ -70,23 +78,31 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
   const basePrice = players && pricing.data ? pricing.data.table[String(players)] : null;
   const total = basePrice !== null ? basePrice + (isWeekend ? pricing.data!.weekend_surcharge : 0) : null;
 
-  const canSubmit = room && date && time && players && name.trim().length >= 2 && phone.trim().length >= 6;
+  const emailOk = /^\S+@\S+\.\S+$/.test(email.trim());
+  const canSubmit = room && date && time && players && name.trim().length >= 2 && phone.trim().length >= 6 && emailOk;
 
-  async function submit() {
+  // createAccount = true: прво се прави профил од податоците во формата, па резервација
+  async function submit(createAccount = false) {
     if (!canSubmit) return;
+    if (createAccount && password.length < 6) {
+      toast.error(t.auth.passwordHint);
+      return;
+    }
     setSubmitting(true);
     try {
+      if (createAccount) {
+        try {
+          await register(name.trim(), email.trim(), password, phone.trim());
+        } catch (e) {
+          toast.error(e instanceof ApiError && e.status === 409 ? t.auth.exists : t.common.error);
+          return;
+        }
+      }
       const booking = await api<Booking>("/api/bookings", {
         method: "POST",
-        body: { room_slug: roomSlug, date: toIsoDate(date), time, players, customer_name: name, phone, notes },
+        body: { room_slug: roomSlug, date: toIsoDate(date), time, players, customer_name: name, phone, email: email.trim(), notes },
       });
-      // Најавен корисник оди на профилот, во „Мои резервации“
-      if (user) {
-        toast.success(`${t.booking.bookedToast} ${booking.code}`);
-        router.push("/profile#bookings");
-        return;
-      }
-      // Гостинот нема профил, па му го покажуваме кодот тука
+      // Pop-up со кодот; најавените имаат и копче до „Мои резервации“
       setConfirmed(booking);
       slots.reload();
       calendar.reload();
@@ -259,6 +275,12 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
                   </div>
                 </div>
                 <div>
+                  <Label htmlFor="email" className="mb-2 block">
+                    {t.common.email}
+                  </Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-10" />
+                </div>
+                <div>
                   <Label htmlFor="notes" className="mb-2 block">
                     {t.booking.notes}
                   </Label>
@@ -287,10 +309,38 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
               <span className="font-heading text-3xl text-primary">{total !== null ? formatPrice(total, lang) : "—"}</span>
             </div>
             <p className="mt-2 text-xs text-muted-foreground">{t.booking.payOnSite}</p>
-            <Button size="xl" className="mt-5 w-full" disabled={!canSubmit || submitting} onClick={submit}>
-              {t.booking.confirm}
-            </Button>
-            {!user && <p className="mt-2 text-center text-xs text-muted-foreground">{t.booking.guestNote}</p>}
+            {user ? (
+              <Button size="xl" className="mt-5 w-full" disabled={!canSubmit || submitting} onClick={() => submit()}>
+                {t.booking.confirm}
+              </Button>
+            ) : withAccount ? (
+              // Гостин што прави профил: треба само уште лозинка
+              <div className="mt-5 space-y-3">
+                <div>
+                  <Label htmlFor="password" className="mb-2 block">
+                    {t.common.password}
+                  </Label>
+                  <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-10" />
+                  <p className="mt-1 text-xs text-muted-foreground">{t.booking.accountNote}</p>
+                </div>
+                <Button size="xl" className="w-full" disabled={!canSubmit || submitting} onClick={() => submit(true)}>
+                  {t.booking.accountAndBook}
+                </Button>
+                <Button variant="ghost" className="w-full" onClick={() => setWithAccount(false)}>
+                  {t.common.back}
+                </Button>
+              </div>
+            ) : (
+              <div className="mt-5 space-y-2">
+                <Button size="xl" className="w-full" disabled={!canSubmit || submitting} onClick={() => submit()}>
+                  {t.booking.justBook}
+                </Button>
+                <Button variant="outline" size="xl" className="w-full" onClick={() => setWithAccount(true)}>
+                  {t.booking.accountAndBook}
+                </Button>
+                <p className="text-center text-xs text-muted-foreground">{t.booking.guestNote}</p>
+              </div>
+            )}
           </div>
         </aside>
       </section>
@@ -333,6 +383,11 @@ export function BookingView({ initialRooms }: { initialRooms: Room[] | null }) {
             </div>
           )}
           <DialogFooter className="gap-2 sm:justify-center">
+            {user && (
+              <Button variant="outline" size="lg" onClick={() => router.push("/profile#bookings")}>
+                {t.profile.bookings}
+              </Button>
+            )}
             <Button size="lg" onClick={reset}>
               {t.booking.another}
             </Button>

@@ -135,6 +135,7 @@ function BookingsTab() {
                   <td className="py-2 pr-3">
                     <div>{b.customer_name}</div>
                     <div className="text-xs text-muted-foreground">{b.phone}</div>
+                    {b.email && <div className="text-xs text-muted-foreground">{b.email}</div>}
                   </td>
                   <td className="py-2 pr-3 text-center">{b.players}</td>
                   <td className="py-2 pr-3 text-right">{formatPrice(b.price, lang)}</td>

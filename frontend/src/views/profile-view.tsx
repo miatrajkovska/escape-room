@@ -9,13 +9,15 @@ import { CtaLink, ErrorState, LoadingNote, PageHeader } from "@/components/share
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLang } from "@/i18n/provider";
-import { api, useApi } from "@/lib/api";
+import { ApiError, api, useApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useMyGameSummary } from "@/components/games/game-shell";
 import { formatDate, formatPrice, pick, toIsoDate } from "@/lib/format";
-import type { Booking, GameId, MyGameStats } from "@/lib/types";
+import type { Booking, GameId, MyGameStats, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 // Пренасочи кон најава ако корисникот не е најавен
@@ -65,7 +67,8 @@ export function ProfileView() {
             <p className="text-xl">{user.name}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <EditProfile user={user} />
             {/* Прво одиме на почетната, па се одјавуваме – инаку профилот би не пренасочил на најава */}
             <Button
               variant="outline"
@@ -85,6 +88,73 @@ export function ProfileView() {
         <MyBookings />
         <MyGames />
       </section>
+    </>
+  );
+}
+
+// Уредување на име, е-пошта и телефон (се користат при резервација)
+function EditProfile({ user }: { user: User }) {
+  const { t } = useLang();
+  const { updateUser } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [saving, setSaving] = useState(false);
+
+  // При отворање: формата се пополнува со сегашните податоци
+  function openDialog() {
+    setForm({ name: user.name, email: user.email, phone: user.phone });
+    setOpen(true);
+  }
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const updated = await api<User>("/api/auth/me", { method: "PATCH", body: form });
+      updateUser(updated);
+      toast.success(t.profile.saved);
+      setOpen(false);
+    } catch (err) {
+      toast.error(err instanceof ApiError && err.status === 409 ? t.auth.exists : t.common.error);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const field = (key: keyof typeof form, label: string, type = "text") => (
+    <div>
+      <Label htmlFor={`profile-${key}`} className="mb-2 block">
+        {label}
+      </Label>
+      <Input id={`profile-${key}`} type={type} value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="h-10" />
+    </div>
+  );
+
+  return (
+    <>
+      <Button variant="outline" size="lg" onClick={openDialog}>
+        {t.profile.editProfile}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.profile.editProfile}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={save} className="space-y-4">
+            {field("name", t.common.name)}
+            {field("email", t.common.email, "email")}
+            {field("phone", t.common.phone, "tel")}
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                {t.common.back}
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {t.common.save}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

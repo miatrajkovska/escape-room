@@ -3,7 +3,7 @@ from .models import BlogPost, Booking, LeaderboardEntry, Room, User
 
 
 def user_out(u: User) -> dict:
-    return {"id": u.id, "name": u.name, "email": u.email, "is_admin": u.is_admin}
+    return {"id": u.id, "name": u.name, "email": u.email, "phone": u.phone, "is_admin": u.is_admin}
 
 
 def room_out(r: Room, best_time: int | None = None) -> dict:
