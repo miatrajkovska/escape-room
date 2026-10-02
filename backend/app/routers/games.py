@@ -10,7 +10,7 @@ from ..schemas import GameAttemptIn, GameScoreIn
 
 router = APIRouter(prefix="/api/games", tags=["games"])
 
-GAMES = {"codebreaker", "memory", "cipher"}
+GAMES = {"codebreaker", "laser", "lights"}
 
 
 def best_per_user(scores: list[GameScore]) -> list[GameScore]:

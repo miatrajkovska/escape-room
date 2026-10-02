@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CardsIcon, CipherIcon, DoorIcon, KeyIcon, themeIcon } from "@/components/icons";
+import { LaserIcon, LightsIcon, DoorIcon, KeyIcon, themeIcon } from "@/components/icons";
 import { CtaLink, ErrorState, LoadingNote, PageHeader } from "@/components/shared";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -335,8 +335,8 @@ function MyGames() {
   const summary = useMyGameSummary();
   const games: { id: GameId; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: "codebreaker", icon: KeyIcon },
-    { id: "memory", icon: CardsIcon },
-    { id: "cipher", icon: CipherIcon },
+    { id: "laser", icon: LaserIcon },
+    { id: "lights", icon: LightsIcon },
   ];
   return (
     <aside>

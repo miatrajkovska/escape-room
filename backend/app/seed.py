@@ -5,11 +5,11 @@ import random
 import sys
 from datetime import datetime, time, timedelta, timezone
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 
 from .auth import hash_password
 from .db import Base, SessionLocal, engine
-from .models import BlogPost, Booking, ContactMessage, GameScore, LeaderboardEntry, Room, User
+from .models import BlogPost, Booking, ContactMessage, GameAttempt, GameScore, LeaderboardEntry, Room, User
 from .pricing import SLOT_TIMES, calc_price, local_now
 
 ROOMS = [
@@ -122,6 +122,9 @@ ROOMS = [
     },
 ]
 
+GAMES_EXCERPT_MK = "Codebreaker, Ласерски лавиринт и Електрична табла – со листа на најдобри играчи."
+GAMES_EXCERPT_EN = "Codebreaker, Laser Maze and Fuse Box – with a live leaderboard."
+
 POSTS = [
     {
         "slug": "nova-soba-grobnica",
@@ -218,8 +221,8 @@ POSTS = [
         "days_ago": 2,
         "title_mk": "Вежбајте дома: нови онлајн мини-игри",
         "title_en": "Practice at home: new online mini-games",
-        "excerpt_mk": "Codebreaker, Меморија и Шифра – со листа на најдобри играчи.",
-        "excerpt_en": "Codebreaker, Memory and Cipher – with a live leaderboard.",
+        "excerpt_mk": GAMES_EXCERPT_MK,
+        "excerpt_en": GAMES_EXCERPT_EN,
         "body_mk": (
             "Додадовме три кратки онлајн игри на нашата страница. Направете профил, играјте и "
             "појавете се на листата на најдобри играчи.\n\n"
@@ -343,14 +346,8 @@ def seed(db) -> None:
             ))
 
     # --- Резултати од мини-игрите ---
-    ranges = {"codebreaker": ((35, 320), (4, 10)), "memory": ((28, 140), (8, 30)), "cipher": ((15, 180), (1, 5))}
-    for game, ((t_min, t_max), (m_min, m_max)) in ranges.items():
-        for p in [*players, demo]:
-            for _ in range(rnd.randint(1, 3)):
-                db.add(GameScore(
-                    user_id=p.id, game=game, time_seconds=rnd.randint(t_min, t_max), moves=rnd.randint(m_min, m_max),
-                    created_at=datetime.now(timezone.utc) - timedelta(days=rnd.randint(0, 30), hours=rnd.randint(0, 23)),
-                ))
+    for game in GAME_SCORE_RANGES:
+        add_demo_scores(db, game, [*players, demo], rnd)
 
     # --- Блог ---
     for p in POSTS:
@@ -383,12 +380,52 @@ def rename_demo_emails(db) -> None:
             db.commit()
 
 
+# Опсег на демо резултати по игра: (време во секунди), (потези)
+GAME_SCORE_RANGES = {
+    "codebreaker": ((35, 320), (4, 10)),
+    "laser": ((40, 240), (10, 40)),
+    "lights": ((45, 300), (15, 60)),
+}
+
+
+def add_demo_scores(db, game: str, users: list[User], rnd: random.Random) -> None:
+    # По 1–3 случајни резултати за секој демо играч
+    (t_min, t_max), (m_min, m_max) = GAME_SCORE_RANGES[game]
+    for p in users:
+        for _ in range(rnd.randint(1, 3)):
+            db.add(GameScore(
+                user_id=p.id, game=game, time_seconds=rnd.randint(t_min, t_max), moves=rnd.randint(m_min, m_max),
+                created_at=datetime.now(timezone.utc) - timedelta(days=rnd.randint(0, 30), hours=rnd.randint(0, 23)),
+            ))
+
+
+def update_games(db) -> None:
+    # „Шифра“ (cipher) и „Меморија“ (memory) се заменети со „Ласерски лавиринт“ и „Електрична табла“
+    for old in ("cipher", "memory"):
+        db.execute(delete(GameScore).where(GameScore.game == old))
+        db.execute(delete(GameAttempt).where(GameAttempt.game == old))
+    # Новите игри добиваат демо ранг-листа ако се уште се празни
+    emails = ["demo@pressesc.mk", *(e for _, e in PLAYERS)]
+    demo_users = list(db.scalars(select(User).where(User.email.in_(emails))).all())
+    rnd = random.Random(7)
+    for game in ("laser", "lights"):
+        if demo_users and not db.scalar(select(func.count(GameScore.id)).where(GameScore.game == game)):
+            add_demo_scores(db, game, demo_users, rnd)
+    # Блог објавата за игрите ги спомнува новите игри
+    post = db.scalar(select(BlogPost).where(BlogPost.slug == "onlajn-igri"))
+    if post:
+        post.excerpt_mk = GAMES_EXCERPT_MK
+        post.excerpt_en = GAMES_EXCERPT_EN
+    db.commit()
+
+
 def seed_if_empty() -> None:
     with SessionLocal() as db:
         if db.scalar(select(func.count(Room.id))) == 0:
             seed(db)
         ensure_admin(db)
         rename_demo_emails(db)
+        update_games(db)
 
 
 if __name__ == "__main__":

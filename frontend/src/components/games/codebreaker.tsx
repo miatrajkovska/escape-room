@@ -78,6 +78,7 @@ export function Codebreaker() {
       game="codebreaker"
       session={session}
       moves={rows.length}
+      movesLeft={MAX_TRIES - rows.length}
       onRestart={restart}
       extraResult={
         session.status === "lost" && (

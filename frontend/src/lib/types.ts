@@ -67,7 +67,7 @@ export type LeaderboardRow = {
   room_slug: string;
 };
 
-export type GameId = "codebreaker" | "memory" | "cipher";
+export type GameId = "codebreaker" | "laser" | "lights";
 
 // Мои резултати по игра: најдобро време, број на победи и вкупно одиграни
 export type MyGameStats = Record<

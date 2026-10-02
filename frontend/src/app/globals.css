@@ -121,13 +121,6 @@
 }
 .animate-swing { animation: swing 4s ease-in-out infinite; transform-origin: top center; }
 
-/* Картичките во Memory играта се вртат */
-.flip-card { perspective: 800px; }
-.flip-inner { transition: transform 0.45s; transform-style: preserve-3d; }
-.flip-card[data-flipped="true"] .flip-inner { transform: rotateY(180deg); }
-.flip-face { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-.flip-back { transform: rotateY(180deg); }
-
 @media (prefers-reduced-motion: reduce) {
   .animate-flicker, .animate-float, .animate-swing { animation: none; }
 }

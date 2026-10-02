@@ -6,8 +6,9 @@ import {
   BriefcaseIcon,
   CakeIcon,
   CalendarIcon,
-  CardsIcon,
   CipherIcon,
+  LaserIcon,
+  LightsIcon,
   DoorIcon,
   GiftIcon,
   KeyIcon,
@@ -244,8 +245,8 @@ function GamesTeaser() {
   const { t } = useLang();
   const games = [
     { icon: KeyIcon, name: t.games.list.codebreaker.name },
-    { icon: CardsIcon, name: t.games.list.memory.name },
-    { icon: CipherIcon, name: t.games.list.cipher.name },
+    { icon: LaserIcon, name: t.games.list.laser.name },
+    { icon: LightsIcon, name: t.games.list.lights.name },
   ];
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">

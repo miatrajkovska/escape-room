@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CardsIcon, CipherIcon, KeyIcon, themeIcon } from "@/components/icons";
+import { LaserIcon, LightsIcon, KeyIcon, themeIcon } from "@/components/icons";
 import { ErrorState, LeaderboardTable, LoadingNote, PageHeader } from "@/components/shared";
 import { GameLeaderboard } from "@/components/games/game-leaderboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -71,8 +71,8 @@ function GamesBoard() {
       <Pills
         items={[
           { id: "codebreaker", label: t.games.list.codebreaker.name, icon: KeyIcon },
-          { id: "memory", label: t.games.list.memory.name, icon: CardsIcon },
-          { id: "cipher", label: t.games.list.cipher.name, icon: CipherIcon },
+          { id: "laser", label: t.games.list.laser.name, icon: LaserIcon },
+          { id: "lights", label: t.games.list.lights.name, icon: LightsIcon },
         ]}
         active={game}
         onChange={(id) => setGame(id as GameId)}

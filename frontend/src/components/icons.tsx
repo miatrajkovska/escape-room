@@ -273,6 +273,27 @@ export const CipherIcon = (p: IconProps) => (
   </Svg>
 );
 
+// Табла со лампички (Електрична табла)
+export const LightsIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="2.5" />
+    <circle cx="8.5" cy="8.5" r="2" fill="currentColor" />
+    <circle cx="15.5" cy="8.5" r="2" />
+    <circle cx="8.5" cy="15.5" r="2" />
+    <circle cx="15.5" cy="15.5" r="2" fill="currentColor" />
+  </Svg>
+);
+
+// Ласер што се одбива од огледало
+export const LaserIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <rect x="2" y="15" width="6" height="4" rx="1" />
+    <path d="M8 17h6l5-10" />
+    <path d="m12.5 5.5 6.5 3" strokeWidth="2.2" />
+    <circle cx="19" cy="7" r="1.2" fill="currentColor" />
+  </Svg>
+);
+
 export const CardsIcon = (p: IconProps) => (
   <Svg {...p}>
     <rect x="3" y="6" width="10" height="14" rx="1.5" transform="rotate(-8 8 13)" />

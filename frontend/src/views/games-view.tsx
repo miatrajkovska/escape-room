@@ -1,21 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { CardsIcon, CipherIcon, KeyIcon } from "@/components/icons";
+import { LaserIcon, LightsIcon, KeyIcon } from "@/components/icons";
 import { GameLeaderboard } from "@/components/games/game-leaderboard";
 import { PageHeader } from "@/components/shared";
 import { buttonVariants } from "@/components/ui/button";
 import { useLang } from "@/i18n/provider";
 import { useApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { useMyGameSummary } from "@/components/games/game-shell";
+import { GuestNotice, useMyGameSummary } from "@/components/games/game-shell";
 import type { GameId, MyGameStats } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const GAMES: { id: GameId; icon: React.ComponentType<{ className?: string }> }[] = [
   { id: "codebreaker", icon: KeyIcon },
-  { id: "memory", icon: CardsIcon },
-  { id: "cipher", icon: CipherIcon },
+  { id: "laser", icon: LaserIcon },
+  { id: "lights", icon: LightsIcon },
 ];
 
 export function GamesView() {
@@ -27,6 +27,9 @@ export function GamesView() {
   return (
     <>
       <PageHeader title={t.games.title} subtitle={t.games.subtitle} />
+      <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6">
+        <GuestNotice next="/games" />
+      </div>
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 lg:grid-cols-3">
         {GAMES.map(({ id, icon: Icon }) => {
           const info = t.games.list[id];
