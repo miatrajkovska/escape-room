@@ -56,7 +56,7 @@ export function AboutView() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {t.about.team.map((m, i) => (
             <div key={m.name} className="card-hover rounded-2xl border border-border bg-card p-6 text-center">
-              <Avatar name={m.name} color={colors[i]} />
+              <Avatar name={m.name} color={colors[i % colors.length]} />
               <h3 className="mt-4 text-lg">{m.name}</h3>
               <p className="text-sm text-muted-foreground">{m.role}</p>
             </div>

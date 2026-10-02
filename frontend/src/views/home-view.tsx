@@ -198,7 +198,8 @@ function Packages() {
         {t.home.packages.map((p, i) => {
           const Icon = icons[i];
           return (
-            <Link key={p.title} href="/pricing" className="card-hover group rounded-2xl border border-border bg-gradient-to-br from-card to-background p-7">
+            // Третата картичка (ваучер) води директно до формата за ваучер
+            <Link key={p.title} href={i === 2 ? "/pricing#voucher" : "/pricing"} className="card-hover group rounded-2xl border border-border bg-gradient-to-br from-card to-background p-7">
               <Icon className="size-12 text-primary transition group-hover:scale-110" />
               <h3 className="mt-5 text-2xl uppercase">{p.title}</h3>
               <p className="mt-2 text-muted-foreground">{p.text}</p>

@@ -140,13 +140,14 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <LangSwitch className="hidden sm:flex" />
-          <div className="hidden sm:block">
-            <UserMenu />
-          </div>
+          {/* Редослед: Резервирај → корисник → јазик */}
           <Link href="/booking" className={cn(buttonVariants({ size: "lg" }), "hidden px-4 md:inline-flex")}>
             {t.nav.book}
           </Link>
+          <div className="hidden sm:block">
+            <UserMenu />
+          </div>
+          <LangSwitch className="hidden sm:flex" />
 
           {/* Мени за мобилен */}
           <Sheet open={open} onOpenChange={setOpen}>

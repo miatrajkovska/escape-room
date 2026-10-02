@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CardsIcon, CipherIcon, KeyIcon, themeIcon } from "@/components/icons";
+import { CardsIcon, CipherIcon, DoorIcon, KeyIcon, themeIcon } from "@/components/icons";
 import { CtaLink, ErrorState, LoadingNote, PageHeader } from "@/components/shared";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -45,13 +45,15 @@ export function StatusBadge({ status }: { status: Booking["status"] }) {
 
 export function ProfileView() {
   const { t } = useLang();
+  const { logout } = useAuth();
+  const router = useRouter();
   const user = useRequireUser();
   if (!user) return <div className="mx-auto max-w-7xl px-4 py-20"><LoadingNote /></div>;
 
   return (
     <>
       <PageHeader title={t.profile.title}>
-        <div className="mt-6 flex items-center gap-4">
+        <div className="mt-6 flex flex-wrap items-center gap-4">
           <div className="flex size-16 items-center justify-center rounded-full border-2 border-primary bg-primary/10 font-heading text-2xl text-primary">
             {user.name
               .split(" ")
@@ -63,6 +65,18 @@ export function ProfileView() {
             <p className="text-xl">{user.name}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
           </div>
+          {/* Прво одиме на почетната, па се одјавуваме – инаку профилот би не пренасочил на најава */}
+          <Button
+            variant="outline"
+            size="lg"
+            className="ml-auto"
+            onClick={() => {
+              router.replace("/");
+              logout();
+            }}
+          >
+            <DoorIcon /> {t.profile.logout}
+          </Button>
         </div>
       </PageHeader>
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_340px]">

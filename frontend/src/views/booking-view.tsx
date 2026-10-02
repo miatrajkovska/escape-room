@@ -155,7 +155,8 @@ export function BookingView() {
           </Step>
 
           {/* 2. Датум и 3. Термин */}
-          <div className={cn("grid gap-8 md:grid-cols-2", !room && "pointer-events-none opacity-40")}>
+          {/* Две колони дури на широк екран, за календарот да собере во кутијата */}
+          <div className={cn("grid gap-8 xl:grid-cols-2", !room && "pointer-events-none opacity-40")}>
             <Step n={2} title={t.booking.step2}>
               <div className="rounded-xl border border-border bg-background p-2">
                 <Calendar
@@ -172,7 +173,7 @@ export function BookingView() {
                   disabled={[{ before: today }, { after: lastDay }, ...fullDays]}
                   modifiers={{ free: freeDays, few: fewDays, full: fullDays }}
                   modifiersClassNames={{ free: "day-free", few: "day-few", full: "day-full" }}
-                  className="mx-auto w-full bg-transparent [--cell-size:--spacing(10)]"
+                  className="mx-auto w-full bg-transparent [--cell-size:--spacing(8)] sm:[--cell-size:--spacing(10)]"
                   classNames={{ root: "w-full" }}
                 />
                 <div className="flex flex-wrap justify-center gap-4 border-t border-border p-3 text-xs text-muted-foreground">

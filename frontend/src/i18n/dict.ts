@@ -72,7 +72,7 @@ export const mk = {
     more: "Повеќе",
   },
   home: {
-    eyebrow: "Излезот е внатре · Скопје",
+    eyebrow: "Излезот е внатре",
     title1: "Имате 60 минути.",
     title2: "Излезете ако можете.",
     subtitle:
@@ -271,6 +271,7 @@ export const mk = {
   },
   profile: {
     title: "Мој профил",
+    logout: "Одјави се",
     bookings: "Мои резервации",
     upcoming: "Претстојни",
     past: "Минати",
@@ -364,6 +365,10 @@ export const mk = {
       { name: "Давид Николов", role: "Техника и електроника" },
       { name: "Христина Јовановска", role: "Водител на игри" },
       { name: "Петар Стојанов", role: "Сценографија" },
+      { name: "Ана Петровска", role: "Водител на игри" },
+      { name: "Стефан Илиевски", role: "Дизајнер на загатки" },
+      { name: "Елена Костовска", role: "Маркетинг и социјални мрежи" },
+      { name: "Никола Димовски", role: "Поддршка за клиенти и резервации" },
     ],
   },
   blog: {
@@ -498,7 +503,7 @@ export const en: Dict = {
     more: "Learn more",
   },
   home: {
-    eyebrow: "The Way Out Is In · Skopje",
+    eyebrow: "The way out is in",
     title1: "You have 60 minutes.",
     title2: "Escape if you can.",
     subtitle:
@@ -697,6 +702,7 @@ export const en: Dict = {
   },
   profile: {
     title: "My profile",
+    logout: "Log out",
     bookings: "My bookings",
     upcoming: "Upcoming",
     past: "Past",
@@ -790,6 +796,10 @@ export const en: Dict = {
       { name: "David Nikolov", role: "Tech & electronics" },
       { name: "Hristina Jovanovska", role: "Game master" },
       { name: "Petar Stojanov", role: "Set design" },
+      { name: "Ana Petrovska", role: "Game master" },
+      { name: "Stefan Ilievski", role: "Puzzle designer" },
+      { name: "Elena Kostovska", role: "Marketing & social media" },
+      { name: "Nikola Dimovski", role: "Customer support & bookings" },
     ],
   },
   blog: {
