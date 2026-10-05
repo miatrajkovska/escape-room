@@ -1,11 +1,12 @@
 # Влезна точка на FastAPI апликацијата
 import logging
+import os
 import re
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
+from sqlalchemy import make_url, text
 
 from .config import CORS_ORIGINS, DATABASE_URL
 from .db import ENGINE_ERROR, Base, engine
@@ -16,6 +17,14 @@ log = logging.getLogger("uvicorn.error")
 
 # Грешката при старт (ако има), за да ја покаже /api/health
 STARTUP_ERROR: str | None = None
+
+
+def database_host() -> str | None:
+    # Само hostname од DATABASE_URL (без корисник и лозинка)
+    try:
+        return make_url(DATABASE_URL).host
+    except Exception:
+        return None
 
 
 def safe_error(e: Exception) -> str:
@@ -68,7 +77,13 @@ def root():
 @app.get("/api/health")
 def health():
     # Секогаш 200, за да се гледа грешката; "database" кажува дали базата работи
-    result = {"status": "ok", "database": "ok"}
+    result = {
+        "status": "ok",
+        "database": "ok",
+        # Дали променливата постои (и не е празна) во контејнерот
+        "database_url_set": bool(os.environ.get("DATABASE_URL")),
+        "database_host": database_host(),
+    }
     try:
         if ENGINE_ERROR:
             raise RuntimeError(ENGINE_ERROR)
