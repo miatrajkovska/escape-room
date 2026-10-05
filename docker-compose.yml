@@ -6,13 +6,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
     environment:
       API_INTERNAL_URL: http://api:8001
     depends_on:
       - api
-    cpus: 0.5
+    cpus: 0.25
     mem_limit: 512m
 
   # FastAPI backend – достапен само внатре како http://api:8001
