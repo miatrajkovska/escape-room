@@ -1,0 +1,9 @@
+# Кој сервис RepoRun го изложува на интернет
+version: 1
+ingress:
+  - name: app
+    service: web      # compose сервисот (Next.js)
+    port: 3000        # портата на која слуша
+    primary: true
+    access:
+      type: public    # секој може да го отвори сајтот

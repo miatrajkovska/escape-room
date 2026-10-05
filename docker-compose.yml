@@ -1,0 +1,28 @@
+# RepoRun: само дозволени полиња (без ports, env_file, labels, restart, networks).
+# Базата е Neon (надворешна), па нема postgres сервис ни .stack-data/ volumes.
+services:
+  # Next.js frontend – единствениот јавен сервис (види stack.yml)
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+    environment:
+      API_INTERNAL_URL: http://api:8001
+    depends_on:
+      - api
+    cpus: 0.5
+    mem_limit: 512m
+
+  # FastAPI backend – достапен само внатре како http://api:8001
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    cpus: 0.25
+    mem_limit: 256m

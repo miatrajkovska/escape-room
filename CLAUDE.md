@@ -33,6 +33,8 @@
   - API рутите се во `app/routers/`: `auth`, `rooms`, `bookings`, `leaderboard`, `games`, `content` (блог + контакт), `admin`.
   - Демо податоци: `app/seed.py` (автоматски при празна база; `python -m app.seed --reset` за ресет).
   - Демо профили и упатство за стартување/deploy: види `README.md`.
+- RepoRun (Docker): `docker-compose.yml` + `stack.yml` во коренот, `Dockerfile` во `frontend/` и `backend/`.
+  Само `web` е јавен; `/api/*` се препраќа до `api` (`API_INTERNAL_URL`). Без ports/env_file/labels/restart/networks.
 - Коренот (`index.html`, `sobi.html`, `css/`, `js/`, `en/`, `images/`) е стариот статичен HTML/CSS/JS сајт – прва верзија, не се менува.
 
 ## Функции

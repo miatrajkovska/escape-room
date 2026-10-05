@@ -42,3 +42,17 @@ npm run dev
    Environment Variable `NEXT_PUBLIC_API_URL` = URL-то од Render (на пр. `https://enigma-escape-api.onrender.com`).
 
 Бесплатниот Render сервер „заспива“ по 15 мин. неактивност – првото барање трае до ~1 минута.
+
+## Deploy на RepoRun (Docker Compose)
+Фајлови: `docker-compose.yml`, `stack.yml`, `frontend/Dockerfile`, `backend/Dockerfile`.
+- `web` (Next.js, порта 3000) е единствениот јавен сервис. `api` (FastAPI) е само внатрешен (`http://api:8001`).
+- Прелистувачот вика `/api/...` на истиот домен, а Next.js го препраќа до `api` (rewrites во `next.config.ts`).
+- Базата останува Neon, па нема postgres сервис. Табелите и демо податоците backend-от ги прави сам при старт.
+- Build-от на `web` не го вика API-то (собите се земаат при барање, `connection()` во `server-data.ts`).
+
+Environment во RepoRun UI: `DATABASE_URL` (Neon), `JWT_SECRET` (долга случајна низа).
+Потоа на страницата на стекот: **Validate** → **Deploy**.
+
+Ако RepoRun не дозволува `build` (`compose.service.build_unsupported`): images се градат и качуваат
+на GHCR, а во `docker-compose.yml` `build:` се заменува со `image: ghcr.io/<user>/pressesc-web:latest`
+(и `pressesc-api`).
