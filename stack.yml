@@ -7,11 +7,3 @@ ingress:
     primary: true
     access:
       type: public    # секој може да го отвори сајтот
-
-  # ПРИВРЕМЕНО за дебагирање: backend-от директно (на пр. /api/health). Да се тргне потоа!
-  - name: api
-    service: api
-    port: 8001
-    primary: false
-    access:
-      type: public
