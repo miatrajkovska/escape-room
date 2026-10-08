@@ -20,7 +20,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      # Neon адресата под посебно име, за RepoRun да не ја пребрише
+      NEON_DATABASE_URL: ${NEON_DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
     # Python наместо curl (curl го нема во python:3.12-slim)

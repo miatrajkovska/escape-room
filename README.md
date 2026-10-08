@@ -50,7 +50,8 @@ npm run dev
 - Базата останува Neon, па нема postgres сервис. Табелите и демо податоците backend-от ги прави сам при старт.
 - Build-от на `web` не го вика API-то (собите се земаат при барање, `connection()` во `server-data.ts`).
 
-Environment во RepoRun UI: `DATABASE_URL` (Neon), `JWT_SECRET` (долга случајна низа).
+Environment во RepoRun UI: `NEON_DATABASE_URL` (Neon connection string), `JWT_SECRET` (долга случајна низа).
+(Не `DATABASE_URL` – RepoRun ја пребришува со host `postgres`.)
 Потоа на страницата на стекот: **Validate** → **Deploy**.
 
 Ако RepoRun не дозволува `build` (`compose.service.build_unsupported`): images се градат и качуваат

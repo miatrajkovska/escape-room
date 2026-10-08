@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import make_url, text
 
-from .config import CORS_ORIGINS, DATABASE_URL
+from .config import CORS_ORIGINS, DATABASE_URL, DATABASE_URL_SOURCE
 from .db import ENGINE_ERROR, Base, engine
 from .routers import admin, auth, bookings, content, games, leaderboard, rooms
 from .seed import seed_if_empty
@@ -82,6 +82,8 @@ def health():
         "database": "ok",
         # Дали променливата постои (и не е празна) во контејнерот
         "database_url_set": bool(os.environ.get("DATABASE_URL")),
+        "neon_database_url_set": bool(os.environ.get("NEON_DATABASE_URL")),
+        "database_url_source": DATABASE_URL_SOURCE,  # од која променлива е адресата
         "database_host": database_host(),
     }
     try:
